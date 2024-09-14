@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.rememberNavController
+import com.example.otiummusicplayer.ui.navigation.AppGraph
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,8 +16,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             OtiumMusicPlayerTheme {
-//                AppGraph(navHostController = rememberNavController())
+                AppGraph(navHostController = rememberNavController())
             }
         }
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun GreetingPreview() {
+//    OtiumMusicPlayerTheme {
+//        Greeting("Android")
+//    }
+//}
