@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Otium Music player</string>
+    <string name="album_im">Album image</string>
 </resources>
