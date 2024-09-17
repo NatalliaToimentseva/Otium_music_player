@@ -1,6 +1,6 @@
 package com.example.otiummusicplayer.di
 
-import com.example.otiummusicplayer.network.Api
+import com.example.otiummusicplayer.network.JamendoApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,7 +19,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApi(): Api {
+    fun provideApi(): JamendoApi {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(
@@ -31,6 +31,6 @@ object NetworkModule {
             )
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        return retrofit.create(Api::class.java)
+        return retrofit.create(JamendoApi::class.java)
     }
 }

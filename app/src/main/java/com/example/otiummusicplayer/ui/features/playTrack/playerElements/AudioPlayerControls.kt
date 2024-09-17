@@ -1,6 +1,5 @@
 package com.example.otiummusicplayer.ui.features.playTrack.playerElements
 
-import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,37 +15,32 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.ui.features.playTrack.domain.PlayerTrackAction
-import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
+import com.example.otiummusicplayer.ui.features.playTrack.domain.PlayerTrackState
 import com.example.otiummusicplayer.ui.theme.White
 import kotlinx.coroutines.delay
 
 
 @Composable
 fun AudioPlayerControls(
-    mediaPlayer: MediaPlayer,
-    totalDurationMillis: Int?,
+    state: PlayerTrackState?,
     processAction: (action: PlayerTrackAction) -> Unit,
 ) {
-    var currentPosition by remember { mutableStateOf(0) }
-    var isPlayed by remember { mutableStateOf(false) }
+//    var currentPosition by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(mediaPlayer) {
-        while (true) {
-            currentPosition = mediaPlayer.currentPosition
-            delay(1000)
+    LaunchedEffect(state?.mediaPlayer) {
+        state?.mediaPlayer?.let {
+            while (true) {
+                processAction(PlayerTrackAction.SetCurrentPosition(it.currentPosition))
+                delay(1000)
+            }
         }
     }
     Column(
@@ -58,23 +52,25 @@ fun AudioPlayerControls(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = formatTime(currentPosition),
+                text = formatTime(state?.currentPosition),
                 color = White,
             )
             Text(
-                text = formatTime(totalDurationMillis ?: 0),
+                text = formatTime(state?.duration ?: 0),
                 color = White,
                 style = MaterialTheme.typography.titleMedium
             )
         }
         Slider(
-            value = currentPosition.toFloat(),
+            value = state?.currentPosition?.toFloat() ?: 0f,
             onValueChange = { value ->
-                currentPosition = value.toInt()
+                processAction(PlayerTrackAction.SetCurrentPosition(value.toInt()))
             },
-            valueRange = 0f..(totalDurationMillis?.toFloat() ?: 0f),
+            valueRange = 0f..(state?.duration?.toFloat() ?: 0f),
             onValueChangeFinished = {
-                mediaPlayer.seekTo(currentPosition)
+                state?.let {
+                    it.mediaPlayer?.seekTo(it.currentPosition)
+                }
             },
             colors = SliderDefaults.colors(
                 thumbColor = White,
@@ -105,12 +101,12 @@ fun AudioPlayerControls(
             }
             IconButton(
                 onClick = {
-                    if (isPlayed) {
+                    if (state?.isPlayed == true) {
                         processAction(PlayerTrackAction.Stop)
-                        isPlayed = false
+                        processAction(PlayerTrackAction.SetPlayed(false))
                     } else {
                         processAction(PlayerTrackAction.Play)
-                        isPlayed = true
+                        processAction(PlayerTrackAction.SetPlayed(true))
                     }
                 },
                 modifier = Modifier
@@ -118,7 +114,7 @@ fun AudioPlayerControls(
                     .width(60.dp)
             ) {
                 Image(
-                    imageVector = if (isPlayed && mediaPlayer.isPlaying) {
+                    imageVector = if (state?.isPlayed == true && state.mediaPlayer?.isPlaying == true) {
                         ImageVector.vectorResource(id = R.drawable.btn_pause)
                     } else {
                         ImageVector.vectorResource(id = R.drawable.btn_play)
@@ -142,22 +138,11 @@ fun AudioPlayerControls(
     }
 }
 
-private fun formatTime(millis: Int): String {
-    val totalSeconds = millis / 1000
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%02d:%02d".format(minutes, seconds)
+private fun formatTime(millis: Int?): String {
+    return if (millis != null) {
+        val totalSeconds = millis / 1000
+        val minutes = totalSeconds / 60
+        val seconds = totalSeconds % 60
+        "%02d:%02d".format(minutes, seconds)
+    } else "0"
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    OtiumMusicPlayerTheme {
-//        val mp = MediaPlayer()
-//        fun AudioPlayerControls(
-//            mediaPlayer: MediaPlayer = mp,
-//            totalDurationMillis: Int = 100000,
-//        ) {
-//        }
-//    }
-//}

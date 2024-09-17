@@ -13,8 +13,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -28,37 +30,51 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.otiummusicplayer.R
+import com.example.otiummusicplayer.ui.features.search.screens.main.domain.NetworkSearchAction
+import com.example.otiummusicplayer.ui.features.search.screens.main.domain.NetworkSearchState
 import com.example.otiummusicplayer.ui.features.search.screens.main.screenElements.AlbumsList
 import com.example.otiummusicplayer.ui.features.search.screens.main.screenElements.ArtistsList
 import com.example.otiummusicplayer.ui.features.search.screens.main.screenElements.ShowArtistsAlbums
 import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.Hover
+import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.ui.theme.White
+import com.example.otiummusicplayer.utils.toast
 
 @Composable
-fun NetworkSearchScreen(
+fun NetworkSearchDestination(
     navHostController: NavHostController,
     viewModel: NetworkSearchScreenViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.getAlb()
-        viewModel.getArt()
+    val state by viewModel.state.collectAsState()
+    NetworkSearchScreen(state = state, processAction = viewModel::processAction) { id ->
+        navHostController.navigate("TrackList/$id")
+    }
+}
+
+@Composable
+fun NetworkSearchScreen(
+    state: NetworkSearchState,
+    processAction: (action: NetworkSearchAction) -> Unit,
+    goTrackList: (id: String) -> Unit
+) {
+    LaunchedEffect(key1 = Unit) {
+        processAction(NetworkSearchAction.LoadInitialData)
     }
     val selectedIcon by remember {
         mutableStateOf("Home")
     }
-    val alb by viewModel.albums.collectAsState()
-    val art by viewModel.artists.collectAsState()
-    val artAlb by viewModel.artistAlbums.collectAsState()
-    val showDialog by viewModel.showDialog.collectAsState()
 
     Scaffold(
         modifier = Modifier
@@ -120,7 +136,7 @@ fun NetworkSearchScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 10.dp),
-                value = "Seach",
+                value = "Search",
                 onValueChange = { },
                 leadingIcon = {
                     IconButton(onClick = { }) {
@@ -148,9 +164,7 @@ fun NetworkSearchScreen(
                 modifier = Modifier
                     .padding(10.dp)
             )
-            AlbumsList(data = alb.results) { id ->
-                navHostController.navigate("TrackList/$id")
-            }
+            AlbumsList(data = state.albums.results, goTrackList)
             Text(
                 text = "Artists",
                 fontSize = 24.sp,
@@ -158,21 +172,39 @@ fun NetworkSearchScreen(
                 modifier = Modifier
                     .padding(10.dp)
             )
-            ArtistsList(art.results) { id ->
-                viewModel.getAlbumsByArtist(id)
+            ArtistsList(artists = state.artists.results) { id ->
+                processAction(NetworkSearchAction.LoadAlbumsByArtist(id))
+            }
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .width(50.dp)
+                        .align(Alignment.CenterHorizontally),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            }
+            if (state.error != null) {
+                LocalContext.current.toast(state.error)
+                processAction(NetworkSearchAction.ClearError)
             }
         }
     }
 
-    if (showDialog) {
-        ShowArtistsAlbums(
-            artAlb,
-            { albumId ->
-                navHostController.navigate("TrackList/$albumId")
-            },
-            {
-                viewModel.closeDialog()
-            }
+    if (state.showDialog) {
+        ShowArtistsAlbums(state.artistAlbums, goTrackList) {
+            processAction(NetworkSearchAction.HideDialog)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NetworkSearchScreenPreview() {
+    OtiumMusicPlayerTheme {
+        NetworkSearchScreen(
+            state = NetworkSearchState(),
+            {}, {}
         )
     }
 }

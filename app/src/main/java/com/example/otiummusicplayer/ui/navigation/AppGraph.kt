@@ -7,9 +7,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.otiummusicplayer.ui.features.playTrack.PlayTrackScreen
-import com.example.otiummusicplayer.ui.features.search.screens.main.NetworkSearchScreen
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.ShowTrackList
+import com.example.otiummusicplayer.ui.features.playTrack.PlayTrackDestination
+import com.example.otiummusicplayer.ui.features.search.screens.main.NetworkSearchDestination
+import com.example.otiummusicplayer.ui.features.search.screens.tracks.TrackListDestination
 
 private const val TRACK_ID = "id"
 private const val TRACK_IMG_URL = "imgUrl"
@@ -22,14 +22,14 @@ fun AppGraph(
 ) {
     NavHost(navController = navHostController, startDestination = "NetworkSearchScreen") {
         composable("NetworkSearchScreen") {
-            NetworkSearchScreen(navHostController)
+            NetworkSearchDestination(navHostController)
         }
         composable(
             "TrackList/{id}",
             arguments = listOf(navArgument(TRACK_ID) { type = NavType.StringType })
         ) { backStack ->
             backStack.arguments?.getString(TRACK_ID)?.let { id ->
-                ShowTrackList(navHostController, id)
+                TrackListDestination(id, navHostController)
             }
         }
         composable(
@@ -46,7 +46,12 @@ fun AppGraph(
                 val decodedImgUrl = Uri.decode(imgUrl)
                 val decodedTitle = Uri.decode(title)
                 val decodedAudioUrl = Uri.decode(audioUrl)
-                PlayTrackScreen(navHostController, decodedImgUrl, decodedTitle, decodedAudioUrl)
+                PlayTrackDestination(
+                    navHostController,
+                    decodedImgUrl,
+                    decodedTitle,
+                    decodedAudioUrl
+                )
             }
         }
     }
