@@ -1,5 +1,7 @@
 package com.example.otiummusicplayer.network.entities
 
+import com.example.otiummusicplayer.models.AlbumModel
+
 data class AlbumData(
     val id: String,
     val image: String,
@@ -13,3 +15,6 @@ data class AlbumData(
     val zip_allowed: Boolean
 )
 
+fun AlbumData.toAlbumModel() = AlbumModel(
+    id, image, name, artist_id, artist_name, shareurl, zip, zip_allowed
+)

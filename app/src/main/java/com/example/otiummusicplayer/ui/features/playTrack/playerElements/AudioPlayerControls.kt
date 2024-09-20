@@ -19,24 +19,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.ui.features.playTrack.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playTrack.domain.PlayerTrackState
 import com.example.otiummusicplayer.ui.theme.White
+import com.example.otiummusicplayer.utils.formatTimeMls
+import com.example.otiummusicplayer.utils.formatTimeSec
 import kotlinx.coroutines.delay
 
 
 @Composable
 fun AudioPlayerControls(
-    state: PlayerTrackState?,
+    state: PlayerTrackState,
     processAction: (action: PlayerTrackAction) -> Unit,
 ) {
-//    var currentPosition by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(state?.mediaPlayer) {
-        state?.mediaPlayer?.let {
+    LaunchedEffect(state.mediaPlayer) {
+        state.mediaPlayer?.let {
             while (true) {
                 processAction(PlayerTrackAction.SetCurrentPosition(it.currentPosition))
                 delay(1000)
@@ -52,25 +54,23 @@ fun AudioPlayerControls(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = formatTime(state?.currentPosition),
+                text = formatTimeMls(state.currentPosition),
                 color = White,
             )
             Text(
-                text = formatTime(state?.duration ?: 0),
+                text = formatTimeSec(state.currentTrack?.duration ?: 0),
                 color = White,
                 style = MaterialTheme.typography.titleMedium
             )
         }
         Slider(
-            value = state?.currentPosition?.toFloat() ?: 0f,
+            value = state.currentPosition.toFloat(),
             onValueChange = { value ->
                 processAction(PlayerTrackAction.SetCurrentPosition(value.toInt()))
             },
-            valueRange = 0f..(state?.duration?.toFloat() ?: 0f),
+            valueRange = 0f..((state.currentTrack?.duration?.times(1000))?.toFloat() ?: 0f),
             onValueChangeFinished = {
-                state?.let {
-                    it.mediaPlayer?.seekTo(it.currentPosition)
-                }
+                state.mediaPlayer?.seekTo(state.currentPosition)
             },
             colors = SliderDefaults.colors(
                 thumbColor = White,
@@ -90,18 +90,18 @@ fun AudioPlayerControls(
             IconButton(onClick = {}) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.btn_shuffle),
-                    contentDescription = "Shuffle"
+                    contentDescription = stringResource(id = R.string.btn_shuffle)
                 )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = {processAction(PlayerTrackAction.PlayPrevious)}) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.btn_prev),
-                    contentDescription = "Previous"
+                    contentDescription = stringResource(id = R.string.btn_previous)
                 )
             }
             IconButton(
                 onClick = {
-                    if (state?.isPlayed == true) {
+                    if (state.isPlayed) {
                         processAction(PlayerTrackAction.Stop)
                         processAction(PlayerTrackAction.SetPlayed(false))
                     } else {
@@ -114,35 +114,30 @@ fun AudioPlayerControls(
                     .width(60.dp)
             ) {
                 Image(
-                    imageVector = if (state?.isPlayed == true && state.mediaPlayer?.isPlaying == true) {
+                    imageVector = if (state.isPlayed && state.mediaPlayer?.isPlaying == true) {
                         ImageVector.vectorResource(id = R.drawable.btn_pause)
                     } else {
                         ImageVector.vectorResource(id = R.drawable.btn_play)
                     },
-                    contentDescription = "Play/Stop"
+                    contentDescription = stringResource(id = R.string.btn_play_stop)
                 )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = {processAction(PlayerTrackAction.PlayNext)}) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.btn_next),
-                    contentDescription = "Next"
+                    contentDescription = stringResource(id = R.string.btn_next)
                 )
             }
-            IconButton(onClick = {}) {
+            IconButton(onClick = {processAction(PlayerTrackAction.LoopTrack)}) {
                 Image(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.btn_repeat),
-                    contentDescription = "Repeat"
+                    imageVector = if(state.isPlayerLooping) {
+                        ImageVector.vectorResource(id = R.drawable.btn_repeat_one)
+                    } else {
+                        ImageVector.vectorResource(id = R.drawable.btn_repeat)
+                    },
+                    contentDescription = stringResource(id = R.string.btn_repeat)
                 )
             }
         }
     }
-}
-
-private fun formatTime(millis: Int?): String {
-    return if (millis != null) {
-        val totalSeconds = millis / 1000
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-        "%02d:%02d".format(minutes, seconds)
-    } else "0"
 }

@@ -6,11 +6,9 @@ sealed class NetworkSearchAction {
 
     data object LoadInitialData : NetworkSearchAction()
 
-    data object ShowDialog : NetworkSearchAction()
-
     data object HideDialog : NetworkSearchAction()
 
-    data class LoadAlbumsByArtist(val id: String) : NetworkSearchAction()
-
     data object ClearError : NetworkSearchAction()
+
+    data class LoadAlbumsByArtist(val id: String) : NetworkSearchAction()
 }

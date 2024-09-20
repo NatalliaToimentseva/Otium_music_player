@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +31,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -39,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.otiummusicplayer.R
+import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.playTrack.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playTrack.domain.PlayerTrackState
 import com.example.otiummusicplayer.ui.features.playTrack.playerElements.AudioPlayerControls
@@ -47,25 +51,20 @@ import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.GraphiteTr
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.ui.theme.TealTr
-
-//TEST
-const val URL =
-    "https://prod-1.storage.jamendo.com/?trackid=1467858&format=mp31&from=QeBfVL5FlSP5h7JRU1OYQQ%3D%3D%7C5OZLVhPfv%2Ff9Z7jFE1nvDw%3D%3D"
+import com.example.otiummusicplayer.utils.toast
 
 @Composable
 fun PlayTrackDestination(
+    id: Int,
+    itemId: String,
     navHostController: NavHostController,
-    imgUrl: String?,
-    title: String?,
-    audioURL: String?,
     viewModel: PlayTrackViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     PlayTrackScreen(
+        id = id,
+        itemId = itemId,
         state = state,
-        imgUrl = imgUrl,
-        title = title,
-        audioURL = audioURL,
         processAction = viewModel::processAction
     ) {
         navHostController.popBackStack()
@@ -75,15 +74,14 @@ fun PlayTrackDestination(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayTrackScreen(
-    state: PlayerTrackState?,
-    imgUrl: String?,
-    title: String?,
-    audioURL: String?,
+    id: Int,
+    itemId: String,
+    state: PlayerTrackState,
     processAction: (action: PlayerTrackAction) -> Unit,
     goBack: () -> Unit,
 ) {
-    LaunchedEffect(Unit) {
-        processAction(PlayerTrackAction.SetUrl(audioURL ?: URL))
+    LaunchedEffect(id) {
+        processAction(PlayerTrackAction.Init(id, itemId))
     }
 
     Scaffold(
@@ -96,7 +94,7 @@ fun PlayTrackScreen(
                     }) {
                         Image(
                             imageVector = ImageVector.vectorResource(id = R.drawable.btn_back),
-                            contentDescription = "Back",
+                            contentDescription = stringResource(id = R.string.btn_back),
                             modifier = Modifier.padding(start = 10.dp, top = 10.dp)
                         )
                     }
@@ -123,7 +121,7 @@ fun PlayTrackScreen(
                     .height(430.dp)
             ) {
                 AsyncImage(
-                    model = imgUrl,
+                    model = state.currentTrack?.image,
                     placeholder = painterResource(id = R.drawable.no_image),
                     error = painterResource(id = R.drawable.no_image),
                     contentDescription = stringResource(id = R.string.album_im),
@@ -165,7 +163,7 @@ fun PlayTrackScreen(
                 )
             }
             Text(
-                text = title ?: "No title",
+                text = state.currentTrack?.name ?: stringResource(id = R.string.no_title),
                 color = Color.White,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
@@ -184,6 +182,19 @@ fun PlayTrackScreen(
                     .padding(start = 20.dp, bottom = 10.dp)
             )
             AudioPlayerControls(state, processAction)
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .width(50.dp)
+                        .align(Alignment.CenterHorizontally),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            }
+            if (state.error != null) {
+                LocalContext.current.toast(state.error)
+                processAction(PlayerTrackAction.ClearError)
+            }
         }
     }
 }
@@ -193,11 +204,19 @@ fun PlayTrackScreen(
 fun PlayTrackScreenPreview() {
     OtiumMusicPlayerTheme {
         PlayTrackScreen(
-            state = PlayerTrackState(),
-            imgUrl = "https://cs13.pikabu.ru/post_img/big/2023/03/03/6/1677836243167140809.png",
-            title = "Карев А.В.(VIGOR) - Время героев",
-            audioURL = "",
-            {},{}
+            id = 1,
+            itemId = "",
+            state = PlayerTrackState(
+                tracks = arrayListOf(
+                    TrackModel(
+                        "",
+                        name = "Карев А.В.(VIGOR) - Время героев",
+                        image = "https://cs13.pikabu.ru/post_img/big/2023/03/03/6/1677836243167140809.png",
+                        "", 1000, "", "", "", "", false, ""
+                    )
+                )
+            ),
+            {}, {}
         )
     }
 }

@@ -20,20 +20,18 @@ class TrackListViewModel @Inject constructor(
 
     fun processAction(action: TrackListAction) {
         when (action) {
-            is TrackListAction.Init -> getTrByAlb(action.id)
+            is TrackListAction.Init -> getTracksByAlbums(action.id)
             TrackListAction.ClearError -> clearError()
         }
     }
 
-    private fun getTrByAlb(id: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            useCase.loadTracks(id).collect { result ->
-                handleResult(result)
-
+    private fun getTracksByAlbums(id: String) {
+        if(state.value.tracks == null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                useCase.loadTracks(id.toInt()).collect { result ->
+                    handleResult(result)
+                }
             }
-//            val trackResponse = api.getTracksByAlbum()
-//            val listTrackData = trackResponse.results.firstOrNull()
-//            state.tryEmit(state.value.copy(tracksData = listTrackData))
         }
     }
 
@@ -43,13 +41,13 @@ class TrackListViewModel @Inject constructor(
             is TrackListResult.Error -> state.tryEmit(
                 state.value.copy(
                     isLoading = false,
-                    error = result.throwable.message
+                    error = "Error of loading: ${result.throwable.message}"
                 )
             )
             is TrackListResult.Success -> state.tryEmit(
                 state.value.copy(
                     isLoading = false,
-                    tracksData = result.data
+                    tracks = result.data
                 )
             )
         }

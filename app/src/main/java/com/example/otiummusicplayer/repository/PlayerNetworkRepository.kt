@@ -8,11 +8,13 @@ import retrofit2.Response
 
 interface PlayerNetworkRepository {
 
-    suspend fun loadAlbums(): Response<Album>
+    suspend fun loadAlbums(limit: String, offset: Int): Response<Album>
 
-    suspend fun loadArtists(): Response<Artists>
+    suspend fun loadArtists(limit: String, offset: Int): Response<Artists>
 
-    suspend fun loadTracksByAlbumId(id: String): Response<Track>
+    suspend fun loadTracksByAlbumId(id: Int): Response<Track>
+
+    suspend fun loadTrack(id: Int): Response<Track>
 
     suspend fun loadAlbumsByArtistId(id: String): Response<Album>
 

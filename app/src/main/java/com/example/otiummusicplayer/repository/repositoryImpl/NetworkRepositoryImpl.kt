@@ -13,13 +13,19 @@ class NetworkRepositoryImpl @Inject constructor(
     private val api: JamendoApi
 ) : PlayerNetworkRepository {
 
-    override suspend fun loadAlbums(): Response<Album> = api.getAlbums()
+    override suspend fun loadAlbums(limit: String, offset: Int): Response<Album> =
+        api.getAlbums(limit = limit, offset = offset)
 
-    override suspend fun loadArtists(): Response<Artists> = api.getArtists()
+    override suspend fun loadArtists(limit: String, offset: Int): Response<Artists> =
+        api.getArtists(limit = limit, offset = offset)
 
-    override suspend fun loadTracksByAlbumId(id: String): Response<Track> = api.getTracksByAlbum()
+    override suspend fun loadTracksByAlbumId(id: Int): Response<Track> =
+        api.getTracksByAlbum(id = id)
 
-    override suspend fun loadAlbumsByArtistId(id: String): Response<Album> = api.getAlbumsByArtist()
+    override suspend fun loadTrack(id: Int): Response<Track> = api.getTrack(id = id)
 
-    override suspend fun searchAllByQuery(searchData: String): Response<SearchResult> = api.searchByQuery()
+    override suspend fun loadAlbumsByArtistId(id: String): Response<Album> = api.getAlbumsByArtist(artistID = id)
+
+    override suspend fun searchAllByQuery(searchData: String): Response<SearchResult> =
+        api.searchByQuery(query = searchData)
 }

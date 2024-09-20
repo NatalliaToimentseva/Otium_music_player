@@ -1,28 +1,28 @@
 package com.example.otiummusicplayer.ui.features.search.screens.main
 
-import com.example.otiummusicplayer.network.entities.Album
+import com.example.otiummusicplayer.models.AlbumModel
+import com.example.otiummusicplayer.network.entities.toAlbumModel
 import com.example.otiummusicplayer.repository.PlayerNetworkRepository
-import com.example.otiummusicplayer.ui.features.search.screens.main.domain.NetworkSearchResult
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import com.example.otiummusicplayer.ui.features.search.screens.main.domain.NetworkResult
 import javax.inject.Inject
 
 class LoadAlbumsUseCase @Inject constructor(
     private val repository: PlayerNetworkRepository
 ) {
 
-    suspend fun loadAlbum(): Flow<NetworkSearchResult> {
-        return flow {
-            emit(NetworkSearchResult.Loading)
-            val response = repository.loadAlbums()
-            if (response.isSuccessful) {
-                emit(NetworkSearchResult.SuccessAlbum(response.body() ?: Album(results = arrayListOf())))
-            } else {
-                emit(NetworkSearchResult.Error(Throwable(response.message())))
+    suspend fun loadAlbums(limit: String, offset: Int): NetworkResult {
+        val albums = arrayListOf<AlbumModel>()
+        val response = repository.loadAlbums(limit, offset)
+        return if (response.isSuccessful) {
+            response.body()?.let {
+                val albs = it.results
+                for (alb in albs) {
+                    albums.add(alb.toAlbumModel())
+                }
             }
-        }.catch { e ->
-            emit(NetworkSearchResult.Error(Throwable(e.message)))
+            NetworkResult.Success(albums)
+        } else {
+            NetworkResult.Error(Throwable(response.code().toString()))
         }
     }
 }
