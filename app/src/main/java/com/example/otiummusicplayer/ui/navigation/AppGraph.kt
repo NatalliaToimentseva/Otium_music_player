@@ -7,11 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.otiummusicplayer.ui.features.playTrack.PlayTrackDestination
-import com.example.otiummusicplayer.ui.features.search.screens.main.NetworkSearchDestination
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.TrackListDestination
+import com.example.otiummusicplayer.ui.features.search.main.screens.NetworkSearchDestination
+import com.example.otiummusicplayer.ui.features.search.tracks.TrackListDestination
 
 private const val TRACK_ID = "id"
 private const val TRACK_ITEM_ID = "itemId"
+private const val TRACKS_LIST = "tracks"
 
 @Composable
 fun AppGraph(
@@ -32,15 +33,16 @@ fun AppGraph(
         composable(
             Route.PlayTrackScreen.route,
             arguments = listOf(
-                navArgument(TRACK_ID) { type = NavType.IntType },
-                navArgument(TRACK_ITEM_ID) {type = NavType.StringType}
+                navArgument(TRACK_ITEM_ID) { type = NavType.StringType },
+                navArgument(TRACKS_LIST) { type = NavType.StringType}
             )
         ) { backStack ->
             backStack.arguments?.run {
-                val id = getInt(TRACK_ID)
                 val itemId = getString(TRACK_ITEM_ID)
-                if (itemId != null) {
-                    PlayTrackDestination(id, itemId, navHostController)
+                val tracks = getString(TRACKS_LIST, "")
+
+                if (itemId != null && tracks != null) {
+                    PlayTrackDestination(itemId = itemId, tracks = tracks, navHostController)
                 }
             }
         }

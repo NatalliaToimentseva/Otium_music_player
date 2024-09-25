@@ -55,14 +55,14 @@ import com.example.otiummusicplayer.utils.toast
 
 @Composable
 fun PlayTrackDestination(
-    id: Int,
     itemId: String,
+    tracks: String,
     navHostController: NavHostController,
     viewModel: PlayTrackViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
     PlayTrackScreen(
-        id = id,
+        tracks = tracks,
         itemId = itemId,
         state = state,
         processAction = viewModel::processAction
@@ -74,14 +74,14 @@ fun PlayTrackDestination(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayTrackScreen(
-    id: Int,
+    tracks: String,
     itemId: String,
     state: PlayerTrackState,
     processAction: (action: PlayerTrackAction) -> Unit,
     goBack: () -> Unit,
 ) {
-    LaunchedEffect(id) {
-        processAction(PlayerTrackAction.Init(id, itemId))
+    LaunchedEffect(Unit) {
+        processAction(PlayerTrackAction.Init(tracks, itemId))
     }
 
     Scaffold(
@@ -204,7 +204,7 @@ fun PlayTrackScreen(
 fun PlayTrackScreenPreview() {
     OtiumMusicPlayerTheme {
         PlayTrackScreen(
-            id = 1,
+            tracks = "",
             itemId = "",
             state = PlayerTrackState(
                 tracks = arrayListOf(

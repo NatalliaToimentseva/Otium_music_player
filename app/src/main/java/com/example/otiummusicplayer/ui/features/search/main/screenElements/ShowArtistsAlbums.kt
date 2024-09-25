@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.ui.features.search.screens.main.screenElements
+package com.example.otiummusicplayer.ui.features.search.main.screenElements
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

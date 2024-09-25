@@ -11,10 +11,10 @@ sealed class Route(val route: String) {
         }
     }
 
-    data object PlayTrackScreen : Route("PlayTrackScreen/{id}/{itemId}") {
+    data object PlayTrackScreen : Route("PlayTrackScreen?itemId={itemId}&tracks={tracks}") {
 
-        fun selectRoute(id: Int, itemId: String): String {
-            return "PlayTrackScreen/$id/$itemId"
+        fun selectRoute(itemId: String, tracks: String): String {
+            return "PlayTrackScreen?itemId=$itemId&tracks=$tracks"
         }
     }
 }

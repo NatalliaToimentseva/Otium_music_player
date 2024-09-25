@@ -2,7 +2,6 @@ package com.example.otiummusicplayer.network
 
 import com.example.otiummusicplayer.network.entities.Album
 import com.example.otiummusicplayer.network.entities.Artists
-import com.example.otiummusicplayer.network.entities.SearchResult
 import com.example.otiummusicplayer.network.entities.Track
 import retrofit2.Response
 import retrofit2.http.GET
@@ -28,6 +27,14 @@ interface JamendoApi {
         @Query("offset") offset: Int
     ): Response<Album>
 
+    @GET("albums/")
+    suspend fun getAlbumsByArtist(
+        @Query("client_id") clientId: String = CLIENT_ID,
+        @Query("format") format: String = FORMAT,
+        @Query("limit") limit: String = STANDART_LIMIT,
+        @Query("artist_id") artistID: String
+    ): Response<Album>
+
     @GET("artists/")
     suspend fun getArtists(
         @Query("client_id") clientId: String = CLIENT_ID,
@@ -46,24 +53,11 @@ interface JamendoApi {
     ): Response<Track>
 
     @GET("tracks/")
-    suspend fun getTrack(
-        @Query("client_id") clientId: String = CLIENT_ID,
-        @Query("format") format: String = FORMAT,
-        @Query("id") id: Int,
-    ): Response<Track>
-
-    @GET("albums/")
-    suspend fun getAlbumsByArtist(
-        @Query("client_id") clientId: String = CLIENT_ID,
-        @Query("format") format: String = FORMAT,
-        @Query("limit") limit: String = STANDART_LIMIT,
-        @Query("artist_id") artistID: String
-    ): Response<Album>
-
-    @GET("autocomplete/")
     suspend fun searchByQuery(
         @Query("client_id") clientId: String = CLIENT_ID,
         @Query("format") format: String = FORMAT,
-        @Query("prefix") query: String
-    ): Response<SearchResult>
+        @Query("search") query: String,
+        @Query("limit") limit: String,
+        @Query("offset") offset: Int
+    ): Response<Track>
 }

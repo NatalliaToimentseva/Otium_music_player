@@ -1,5 +1,9 @@
 package com.example.otiummusicplayer.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class TrackModel(
     val id: String,
     val name: String,
@@ -12,4 +16,4 @@ data class TrackModel(
     val audioDownload: String,
     val isDownloadAllowed: Boolean,
     val shareUrl: String
-)
+): Parcelable

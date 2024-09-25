@@ -3,22 +3,20 @@ package com.example.otiummusicplayer.ui.features.playTrack
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.playTrack.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playTrack.domain.PlayerTrackState
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.LoadTracksByAlbumIdUseCase
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.domain.TrackListResult
+import com.example.otiummusicplayer.ui.features.search.tracks.domain.TrackListResult
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayTrackViewModel @Inject constructor(
-    private val loadTracksByAlbumIdUseCase: LoadTracksByAlbumIdUseCase
-) : ViewModel() {
+    private val gson: Gson) : ViewModel() {
 
     val state = MutableStateFlow(PlayerTrackState())
 
@@ -45,7 +43,7 @@ class PlayTrackViewModel @Inject constructor(
         when (action) {
             is PlayerTrackAction.SetPlayed -> setPlayed(action.isPlayed)
             is PlayerTrackAction.SetCurrentPosition -> setPosition(action.position)
-            is PlayerTrackAction.Init -> init(action.id, action.itemId)
+            is PlayerTrackAction.Init -> init(action.tracks, action.itemId)
             PlayerTrackAction.ClearError -> clearError()
             PlayerTrackAction.Play -> startPlayer()
             PlayerTrackAction.Stop -> pausePlayer()
@@ -55,17 +53,16 @@ class PlayTrackViewModel @Inject constructor(
         }
     }
 
-    private fun init(id: Int, itemId: String) {
+    private fun init(tracks: String, itemId: String) {
         if (state.value.tracks == null) {
-            viewModelScope.launch(Dispatchers.IO) {
-                loadTracksByAlbumIdUseCase.loadTracks(id).collect { result ->
-                    handleResult(result)
-                }
-                state.value.tracks?.let { tracks ->
-                    state.tryEmit(state.value.copy(currentTrack = tracks.firstOrNull { it.id == itemId }))
-                }
-                preparePlayer()
-            }
+            val listType = object : TypeToken<List<TrackModel>>() {}.type
+            val trackList = gson.fromJson<List<TrackModel>>(tracks, listType)
+            state.tryEmit(
+                state.value.copy(
+                    tracks = trackList,
+                    currentTrack = trackList.firstOrNull { it.id == itemId })
+            )
+            preparePlayer()
         }
     }
 
@@ -83,6 +80,9 @@ class PlayTrackViewModel @Inject constructor(
     private fun startPlayer() {
         try {
             state.value.mediaPlayer?.start()
+            state.value.mediaPlayer?.setOnCompletionListener {
+                playNext()
+            }
         } catch (e: IOException) {
             e.stackTrace
         }

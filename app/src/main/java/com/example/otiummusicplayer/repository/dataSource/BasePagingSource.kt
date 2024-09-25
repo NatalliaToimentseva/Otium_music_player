@@ -2,14 +2,14 @@ package com.example.otiummusicplayer.repository.dataSource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.otiummusicplayer.ui.features.search.screens.main.domain.NetworkResult
+import com.example.otiummusicplayer.ui.features.search.main.domain.PagingNetworkResult
 import retrofit2.HttpException
 
 private const val BASE_STARTING_PAGE_INDEX = 1
 private const val ONE_PAGE = 1
 
 abstract class BasePagingSource<T : Any>(
-    private val request: suspend (limit: String, offset: Int) -> NetworkResult
+    private val request: suspend (limit: String, offset: Int) -> PagingNetworkResult<T>
 ) : PagingSource<Int, T>() {
 
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
@@ -27,17 +27,18 @@ abstract class BasePagingSource<T : Any>(
                 pageSize.toString(),
                 page * pageSize
             )
-            when (response) {
-                is NetworkResult.Error -> {
-                    LoadResult.Error(response.throwable)
-                }
 
-                is NetworkResult.Success<*> -> {
-                    return LoadResult.Page(
+            when (response) {
+                is PagingNetworkResult.Success -> {
+                    LoadResult.Page(
                         data = response.data,
                         prevKey = if (page == BASE_STARTING_PAGE_INDEX) null else page - ONE_PAGE,
                         nextKey = if (response.data.size < pageSize) null else page + ONE_PAGE
-                    ) as LoadResult<Int, T>
+                    )
+                }
+
+                is PagingNetworkResult.Error -> {
+                    LoadResult.Error(response.error)
                 }
             }
         } catch (e: HttpException) {

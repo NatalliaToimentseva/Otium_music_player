@@ -1,9 +1,8 @@
-package com.example.otiummusicplayer.ui.features.search.screens.main
+package com.example.otiummusicplayer.ui.features.search.main
 
-import com.example.otiummusicplayer.models.AlbumModel
-import com.example.otiummusicplayer.network.entities.toAlbumModel
+import com.example.otiummusicplayer.network.entities.toAlbumModelList
 import com.example.otiummusicplayer.repository.PlayerNetworkRepository
-import com.example.otiummusicplayer.ui.features.search.screens.main.domain.NetworkResult
+import com.example.otiummusicplayer.ui.features.search.main.domain.NetworkResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -15,16 +14,11 @@ class LoadAlbumByArtistUseCase @Inject constructor(
 
     suspend fun loadAlbumsByArtist(id: String): Flow<NetworkResult> {
         return flow {
-            val albums = arrayListOf<AlbumModel>()
+            emit(NetworkResult.Loading)
             val response = repository.loadAlbumsByArtistId(id)
             if (response.isSuccessful) {
-                response.body()?.let {
-                    val albs = it.results
-                    for (alb in albs) {
-                        albums.add(alb.toAlbumModel())
-                    }
-                }
-                emit(NetworkResult.Success(albums))
+                val albums = response.body()?.toAlbumModelList() ?: arrayListOf()
+                emit(NetworkResult.SuccessAlbumByArtist(albums))
             } else {
                 emit(NetworkResult.Error(Throwable(response.code().toString())))
             }

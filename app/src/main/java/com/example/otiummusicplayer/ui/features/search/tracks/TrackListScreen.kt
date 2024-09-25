@@ -1,6 +1,5 @@
-package com.example.otiummusicplayer.ui.features.search.screens.tracks
+package com.example.otiummusicplayer.ui.features.search.tracks
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,13 +29,14 @@ import androidx.navigation.NavHostController
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.domain.TrackLisState
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.domain.TrackListAction
+import com.example.otiummusicplayer.ui.features.search.tracks.domain.TrackLisState
+import com.example.otiummusicplayer.ui.features.search.tracks.domain.TrackListAction
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.utils.toast
+import com.google.gson.GsonBuilder
 
 @Composable
 fun TrackListDestination(
@@ -45,11 +45,14 @@ fun TrackListDestination(
     viewModel: TrackListViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val gson = GsonBuilder().create()
+    val tracks = state.tracks ?: arrayListOf()
+    val tracksList = gson.toJson(tracks)
     TrackListScreen(id = id, state = state, processAction = viewModel::processAction, {
         navHostController.popBackStack()
-    }, { albumId, itemId ->
+    }, { itemId ->
         navHostController.navigate(
-            Route.PlayTrackScreen.selectRoute(albumId, itemId)
+            Route.PlayTrackScreen.selectRoute(itemId = itemId, tracks = tracksList)
         )
     })
 }
@@ -60,7 +63,7 @@ fun TrackListScreen(
     state: TrackLisState,
     processAction: (action: TrackListAction) -> Unit,
     goBack: () -> Unit,
-    navigate: (albumId: Int, itemId: String) -> Unit
+    navigate: (itemId: String) -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
         processAction(TrackListAction.Init(id))
@@ -85,8 +88,7 @@ fun TrackListScreen(
             items(items = state.tracks ?: arrayListOf()) { item ->
                 Row(verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
-                        navigate.invoke(item.albumId.toInt(), item.id)
-                        Log.d("AAA", "TrackListScreen position $item.position")
+                        navigate.invoke(item.id)
                     }) {
                     Image(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
@@ -94,14 +96,16 @@ fun TrackListScreen(
                     )
                     Text(
                         text = item.name,
-                        fontSize = 16.sp,
+                        fontSize = 20.sp,
                         color = White,
                         modifier = Modifier.padding(10.dp)
                     )
                 }
             }
         }
-        if (state.isLoading) { ShowProgress(null) }
+        if (state.isLoading) {
+            ShowProgress(null)
+        }
         if (state.error != null) {
             LocalContext.current.toast(state.error)
             processAction(TrackListAction.ClearError)
@@ -116,12 +120,14 @@ fun TrackListPreview() {
         TrackListScreen(
             id = "1",
             state = TrackLisState(
-                tracks = arrayListOf( TrackModel(
-                    "","","","",100,"","",
-                    "","",false, ""
-                ))
+                tracks = arrayListOf(
+                    TrackModel(
+                        "", "Test", "", "", 100, "", "",
+                        "", "", false, ""
+                    )
+                )
             ),
-            {}, {}, { _, _ ->
+            {}, {}, { _ ->
             }
         )
     }

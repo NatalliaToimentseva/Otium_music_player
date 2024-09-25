@@ -1,10 +1,10 @@
-package com.example.otiummusicplayer.ui.features.search.screens.tracks
+package com.example.otiummusicplayer.ui.features.search.tracks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.domain.TrackLisState
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.domain.TrackListAction
-import com.example.otiummusicplayer.ui.features.search.screens.tracks.domain.TrackListResult
+import com.example.otiummusicplayer.ui.features.search.tracks.domain.TrackLisState
+import com.example.otiummusicplayer.ui.features.search.tracks.domain.TrackListAction
+import com.example.otiummusicplayer.ui.features.search.tracks.domain.TrackListResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

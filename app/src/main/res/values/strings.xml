@@ -11,6 +11,7 @@
     <string name="composition">Composition</string>
     <string name="loading_error">Error of loading data</string>
     <string name="search">Search</string>
+    <string name="searchError">Search value required</string>
     <string name="albums">Albums</string>
     <string name="artists">Artists</string>
 </resources>

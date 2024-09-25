@@ -8,7 +8,6 @@ data class PlayerTrackState(
     val tracks: List<TrackModel>? = null,
     val currentTrack: TrackModel? = null,
     val error: String? = null,
-//    val duration: Int? = 0,
     val currentPosition: Int = 0,
     val isPlayed: Boolean = false,
     val isPlayerLooping: Boolean = false,

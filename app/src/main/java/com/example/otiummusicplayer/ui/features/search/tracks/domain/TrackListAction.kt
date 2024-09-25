@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.ui.features.search.screens.tracks.domain
+package com.example.otiummusicplayer.ui.features.search.tracks.domain
 
 sealed class TrackListAction {
 
