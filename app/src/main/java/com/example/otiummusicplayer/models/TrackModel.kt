@@ -1,6 +1,7 @@
 package com.example.otiummusicplayer.models
 
 import android.os.Parcelable
+import com.example.otiummusicplayer.roomDB.entity.TracksDbEntity
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -15,5 +16,24 @@ data class TrackModel(
     val artistName: String,
     val audioDownload: String,
     val isDownloadAllowed: Boolean,
-    val shareUrl: String
-): Parcelable
+    val shareUrl: String,
+    val isFavorite: Boolean
+) : Parcelable
+
+fun TrackModel.toTrackDbEntity(): TracksDbEntity {
+    return TracksDbEntity(
+        0,
+        id,
+        name,
+        image,
+        audio,
+        duration,
+        albumName,
+        albumId,
+        albumName,
+        audioDownload,
+        isDownloadAllowed,
+        shareUrl,
+        true
+    )
+}

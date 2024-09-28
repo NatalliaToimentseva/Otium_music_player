@@ -6,9 +6,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.otiummusicplayer.ui.features.playTrack.PlayTrackDestination
-import com.example.otiummusicplayer.ui.features.search.main.screens.NetworkSearchDestination
-import com.example.otiummusicplayer.ui.features.search.tracks.TrackListDestination
+import com.example.otiummusicplayer.ui.features.playerScreen.PlayTrackDestination
+import com.example.otiummusicplayer.ui.features.searchScreen.main.screens.NetworkSearchDestination
+import com.example.otiummusicplayer.ui.features.searchScreen.tracks.TrackListDestination
 
 private const val TRACK_ID = "id"
 private const val TRACK_ITEM_ID = "itemId"

@@ -27,5 +27,6 @@ fun TrackData.toTrackModel(): TrackModel = TrackModel(
     artistName = artist_name,
     audioDownload = audiodownload,
     isDownloadAllowed = audiodownload_allowed,
-    shareUrl = shareurl
+    shareUrl = shareurl,
+    isFavorite = false
 )

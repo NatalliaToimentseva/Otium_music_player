@@ -3,9 +3,9 @@ package com.example.otiummusicplayer.repository.dataSource
 import com.example.otiummusicplayer.models.AlbumModel
 import com.example.otiummusicplayer.models.ArtistModel
 import com.example.otiummusicplayer.models.TrackModel
-import com.example.otiummusicplayer.ui.features.search.main.LoadAlbumsUseCase
-import com.example.otiummusicplayer.ui.features.search.main.LoadArtistsUseCase
-import com.example.otiummusicplayer.ui.features.search.main.SearchTracksUseCase
+import com.example.otiummusicplayer.ui.features.searchScreen.main.LoadAlbumsUseCase
+import com.example.otiummusicplayer.ui.features.searchScreen.main.LoadArtistsUseCase
+import com.example.otiummusicplayer.ui.features.searchScreen.main.SearchTracksUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -32,7 +32,7 @@ class SearchPagingSource @AssistedInject constructor(
     useCase.searchTrackByQuery(query, l, i)
 }
 ) {
-        @AssistedFactory
+    @AssistedFactory
     interface Factory {
 
         fun create(query: String): SearchPagingSource
