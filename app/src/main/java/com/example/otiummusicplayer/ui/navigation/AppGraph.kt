@@ -6,9 +6,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.otiummusicplayer.ui.features.playerScreen.PlayTrackDestination
-import com.example.otiummusicplayer.ui.features.searchScreen.main.screens.NetworkSearchDestination
-import com.example.otiummusicplayer.ui.features.searchScreen.tracks.TrackListDestination
+import com.example.otiummusicplayer.ui.features.playerControlScreen.PlayTrackDestination
+import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.CollectionListDestination
+import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.screens.NetworkSearchDestination
+import com.example.otiummusicplayer.ui.features.workWithNetworkPart.tracksScreen.TrackListDestination
 
 private const val TRACK_ID = "id"
 private const val TRACK_ITEM_ID = "itemId"
@@ -18,7 +19,10 @@ private const val TRACKS_LIST = "tracks"
 fun AppGraph(
     navHostController: NavHostController
 ) {
-    NavHost(navController = navHostController, startDestination = Route.NetworkSearch.route) {
+    NavHost(navController = navHostController, startDestination = Route.PlaylistsScreen.route) {
+        composable(Route.PlaylistsScreen.route) {
+            CollectionListDestination(navHostController)
+        }
         composable(Route.NetworkSearch.route) {
             NetworkSearchDestination(navHostController)
         }

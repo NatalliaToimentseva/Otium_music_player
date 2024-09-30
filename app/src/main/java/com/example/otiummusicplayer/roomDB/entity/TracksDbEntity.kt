@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.otiummusicplayer.models.TrackModel
+import com.example.otiummusicplayer.models.networkPart.TrackModel
 
 @Entity(
     tableName = "Tracks",

@@ -2,6 +2,8 @@ package com.example.otiummusicplayer.ui.navigation
 
 sealed class Route(val route: String) {
 
+    data object PlaylistsScreen : Route("PlaylistsScreen")
+
     data object NetworkSearch : Route("NetworkSearchScreen")
 
     data object TrackList : Route("TrackList/{id}") {

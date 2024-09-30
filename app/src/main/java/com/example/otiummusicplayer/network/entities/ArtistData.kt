@@ -1,6 +1,6 @@
 package com.example.otiummusicplayer.network.entities
 
-import com.example.otiummusicplayer.models.ArtistModel
+import com.example.otiummusicplayer.models.networkPart.ArtistModel
 
 data class ArtistData(
     val id: String,

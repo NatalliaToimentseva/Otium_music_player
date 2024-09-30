@@ -10,10 +10,18 @@
     <string name="btn_download">Download</string>
     <string name="no_title">No title</string>
     <string name="composition">Composition</string>
+    <string name="playlist">Playlist</string>
     <string name="loading_error">Error of loading data</string>
     <string name="file_downloaded">File was downloaded</string>
     <string name="search">Search</string>
     <string name="searchError">Search value required</string>
     <string name="albums">Albums</string>
     <string name="artists">Artists</string>
+    <string name="floating_button">Create playlist</string>
+    <string name="positive_button">OK</string>
+    <string name="negative_button">Cancel</string>
+    <string name="dialog_title">Create a new playlist</string>
+    <string name="dialog_message">Add playlist title:</string>
+    <string name="folders">Folders</string>
+    <string name="tracks">Tracks</string>
 </resources>

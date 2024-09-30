@@ -3,7 +3,7 @@ package com.example.otiummusicplayer.repository.dataSource
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.otiummusicplayer.ui.features.searchScreen.main.domain.PagingResult
+import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.domain.PagingResult
 import retrofit2.HttpException
 
 private const val BASE_STARTING_PAGE_INDEX = 1
