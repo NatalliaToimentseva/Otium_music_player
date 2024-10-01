@@ -2,11 +2,15 @@ package com.example.otiummusicplayer.roomDB.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.otiummusicplayer.models.mobilePart.PlayerPlayListModel
 
 @Entity(
-    tableName = "Playlists"
+    tableName = "Playlists",
+    indices = [
+        Index("title", unique = true)
+    ]
 )
 data class PlaylistsEntity(
     @PrimaryKey(autoGenerate = true)

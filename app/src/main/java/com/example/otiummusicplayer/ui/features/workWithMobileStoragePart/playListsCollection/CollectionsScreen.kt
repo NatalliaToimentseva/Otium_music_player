@@ -1,14 +1,17 @@
 package com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
@@ -16,6 +19,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -48,6 +53,7 @@ import com.example.otiummusicplayer.ui.theme.FloatingButton
 import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.Hover
 import com.example.otiummusicplayer.ui.theme.TealLight
+import com.example.otiummusicplayer.ui.theme.TealTr
 import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.utils.toast
 
@@ -70,6 +76,7 @@ fun CollectionListDestination(
         })
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CollectionListScreen(
     state: CollectionListState,
@@ -81,8 +88,7 @@ fun CollectionListScreen(
     Scaffold(
         modifier = Modifier
             .background(Graphite)
-            .fillMaxSize()
-            .padding(10.dp),
+            .fillMaxSize(),
         containerColor = Graphite,
         bottomBar = { BottomNavigationScreenElement(Route.PlaylistsScreen, navigate) },
         floatingActionButton = {
@@ -103,14 +109,29 @@ fun CollectionListScreen(
             modifier = Modifier
                 .background(Graphite)
                 .fillMaxSize()
-                .padding(innerPadding.calculateTopPadding() + 10.dp)
+                .padding(innerPadding)
         ) {
-            Text(
-                text = "Playlists",
-                fontSize = 26.sp,
-                color = White,
-                modifier = Modifier.padding(10.dp)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = stringResource(id = R.string.playlist),
+                    fontSize = 26.sp,
+                    color = White,
+                    modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp)
+                )
+                if (state.selectedItemsList.isNotEmpty()) {
+                    IconButton(onClick = { processAction(CollectionListAction.DeletePlaylist) }) {
+                        Image(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
+                            contentDescription = null,
+                            modifier = Modifier.size(25.dp)
+                        )
+                    }
+                }
+            }
             playlists?.let { lists ->
                 when (lists.loadState.refresh) {
                     is LoadState.Error -> LocalContext.current.toast(stringResource(id = R.string.loading_error))
@@ -119,21 +140,40 @@ fun CollectionListScreen(
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(15.dp)
                         ) {
                             items(lists.itemCount) { index ->
-                                Row(verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.clickable {
-                                        lists[index]?.id?.let { goToTracks(it) }
-                                    }) {
-                                    lists[index]?.run {
+                                lists[index]?.let { item ->
+                                    Row(verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                if (state.selectedItemsList.contains(item)) {
+                                                    TealTr
+                                                } else {
+                                                    Color.Transparent
+                                                }
+                                            )
+                                            .padding(horizontal = 15.dp, vertical = 6.dp)
+                                            .combinedClickable(
+                                                onClick = {
+                                                    goToTracks(item.id)
+                                                },
+                                                onLongClick = {
+                                                    processAction(
+                                                        CollectionListAction.SelectItem(
+                                                            item
+                                                        )
+                                                    )
+                                                }
+                                            )
+                                    ) {
                                         Image(
                                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
                                             contentDescription = stringResource(id = R.string.playlist),
                                             modifier = Modifier.height(30.dp)
                                         )
                                         Text(
-                                            text = playListTitle,
+                                            text = item.playListTitle,
                                             fontSize = 20.sp,
                                             color = White,
                                             modifier = Modifier.padding(10.dp)
@@ -144,14 +184,11 @@ fun CollectionListScreen(
                         }
                     }
                 }
-                if (state.isLoading) {
-                    ShowProgress(null)
-                }
-                if (state.error != null) {
-                    LocalContext.current.toast(state.error)
-                    processAction(CollectionListAction.ClearError)
-                }
             }
+        }
+        if(state.error != null) {
+            LocalContext.current.toast(state.error)
+            processAction(CollectionListAction.ClearError)
         }
         if (state.isShowDialog) {
             AlertDialog(

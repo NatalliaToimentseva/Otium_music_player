@@ -13,7 +13,7 @@ class PlaylistDbRepositoryImpl @Inject constructor(
     override suspend fun addPlaylist(playlistsEntity: PlaylistsEntity) =
         dao.createPlaylist(playlistsEntity)
 
-    override suspend fun deletePlaylistById(id: Long) = dao.deletePlaylist(id)
+    override suspend fun deletePlaylistById(id: List<Long>) = dao.deletePlaylist(id)
 
     override fun getPlaylists(): PagingSource<Int, PlaylistsEntity> = dao.getPlaylists()
 }

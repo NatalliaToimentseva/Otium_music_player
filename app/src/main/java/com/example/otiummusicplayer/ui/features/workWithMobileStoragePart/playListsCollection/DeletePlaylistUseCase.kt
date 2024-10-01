@@ -8,7 +8,7 @@ class DeletePlaylistUseCase @Inject constructor(
     private val repository: PlaylistDbRepository
 ) {
 
-    suspend fun deletePlayList(id: Long) {
+    suspend fun deletePlayList(id: List<Long>) {
         try {
             repository.deletePlaylistById(id)
         } catch (e: SQLiteConstraintException) {

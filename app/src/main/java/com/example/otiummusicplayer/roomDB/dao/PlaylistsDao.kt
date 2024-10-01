@@ -13,8 +13,8 @@ interface PlaylistsDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun createPlaylist(list: PlaylistsEntity)
 
-    @Query("DELETE FROM Playlists WHERE id = :id")
-    suspend fun deletePlaylist(id: Long)
+    @Query("DELETE FROM Playlists WHERE id IN (:id)")
+    suspend fun deletePlaylist(id: List<Long>)
 
     @Query("SELECT * FROM Playlists")
     fun getPlaylists(): PagingSource<Int, PlaylistsEntity>

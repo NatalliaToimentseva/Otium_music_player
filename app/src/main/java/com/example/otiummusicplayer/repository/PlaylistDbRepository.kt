@@ -7,7 +7,7 @@ interface PlaylistDbRepository {
 
     suspend fun addPlaylist(playlistsEntity: PlaylistsEntity)
 
-    suspend fun deletePlaylistById(id: Long)
+    suspend fun deletePlaylistById(id: List<Long>)
 
     fun getPlaylists(): PagingSource<Int, PlaylistsEntity>
 }
