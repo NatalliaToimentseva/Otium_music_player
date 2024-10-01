@@ -103,10 +103,8 @@ fun AudioPlayerControls(
                 onClick = {
                     if (state.isPlayed) {
                         processAction(PlayerTrackAction.Stop)
-                        processAction(PlayerTrackAction.SetPlayed(false))
                     } else {
                         processAction(PlayerTrackAction.Play)
-                        processAction(PlayerTrackAction.SetPlayed(true))
                     }
                 },
                 modifier = Modifier

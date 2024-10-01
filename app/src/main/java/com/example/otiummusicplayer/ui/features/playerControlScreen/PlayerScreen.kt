@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -52,6 +53,7 @@ import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.GraphiteTr
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.ui.theme.TealTr
+import com.example.otiummusicplayer.utils.toast
 
 @Composable
 fun PlayTrackDestination(
@@ -83,6 +85,7 @@ fun PlayTrackScreen(
     LaunchedEffect(Unit) {
         processAction(PlayerTrackAction.Init(tracks, itemId))
     }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -105,12 +108,11 @@ fun PlayTrackScreen(
                         Button(
                             onClick = {
                                processAction(PlayerTrackAction.DownloadTrack)
+                                context.toast("Downloads was started, please wait...")
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Graphite),
                             modifier = Modifier
                                 .align(Alignment.CenterEnd)
-//                                .height(50.dp)
-//                                .width(50.dp)
                                 .padding(end = 45.dp, top = 15.dp)
                         ) {
                             Image(
@@ -163,8 +165,8 @@ fun PlayTrackScreen(
             ) {
                 AsyncImage(
                     model = state.currentTrack?.image,
-                    placeholder = painterResource(id = R.drawable.no_image),
-                    error = painterResource(id = R.drawable.no_image),
+                    placeholder = painterResource(id = R.drawable.ic_sound),
+                    error = painterResource(id = R.drawable.ic_sound),
                     contentDescription = stringResource(id = R.string.album_im),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier

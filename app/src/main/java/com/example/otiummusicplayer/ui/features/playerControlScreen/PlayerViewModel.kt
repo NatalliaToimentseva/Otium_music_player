@@ -49,7 +49,6 @@ class PlayerViewModel @Inject constructor(
 
     fun processAction(action: PlayerTrackAction) {
         when (action) {
-            is PlayerTrackAction.SetPlayed -> setPlayed(action.isPlayed)
             is PlayerTrackAction.SetCurrentPosition -> setPosition(action.position)
             is PlayerTrackAction.Init -> init(action.tracks, action.itemId)
             PlayerTrackAction.Play -> startPlayer()
@@ -83,6 +82,7 @@ class PlayerViewModel @Inject constructor(
                     )
                 }
                 preparePlayer()
+                startPlayer()
             }
         }
     }
@@ -104,6 +104,7 @@ class PlayerViewModel @Inject constructor(
             state.value.mediaPlayer?.setOnCompletionListener {
                 playNext()
             }
+            state.tryEmit(state.value.copy(isPlayed = true))
         } catch (e: IOException) {
             e.stackTrace
         }
@@ -113,6 +114,7 @@ class PlayerViewModel @Inject constructor(
         try {
             if (state.value.mediaPlayer?.isPlaying == true) {
                 state.value.mediaPlayer?.pause()
+                state.tryEmit(state.value.copy(isPlayed = false))
             }
         } catch (e: Exception) {
             e.stackTrace
@@ -183,10 +185,6 @@ class PlayerViewModel @Inject constructor(
 
     private fun synchroniseLoop() {
         state.value.mediaPlayer?.isLooping = state.value.isPlayerLooping
-    }
-
-    private fun setPlayed(isPlayed: Boolean) {
-        state.tryEmit(state.value.copy(isPlayed = isPlayed))
     }
 
     private fun setPosition(position: Int) {

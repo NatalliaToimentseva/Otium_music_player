@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
@@ -20,12 +21,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -45,6 +46,8 @@ import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavi
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.FloatingButton
 import com.example.otiummusicplayer.ui.theme.Graphite
+import com.example.otiummusicplayer.ui.theme.Hover
+import com.example.otiummusicplayer.ui.theme.TealLight
 import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.utils.toast
 
@@ -71,7 +74,7 @@ fun CollectionListDestination(
 fun CollectionListScreen(
     state: CollectionListState,
     processAction: (action: CollectionListAction) -> Unit,
-    goTo: (address: String) -> Unit,
+    goToTracks: (idPlaylist: Long) -> Unit,
     navigate: (route: String) -> Unit
 ) {
     val playlists = state.playLists?.collectAsLazyPagingItems()
@@ -121,12 +124,13 @@ fun CollectionListScreen(
                             items(lists.itemCount) { index ->
                                 Row(verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.clickable {
-//                            navigate.invoke(item.id)
+                                        lists[index]?.id?.let { goToTracks(it) }
                                     }) {
                                     lists[index]?.run {
                                         Image(
                                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
                                             contentDescription = stringResource(id = R.string.playlist),
+                                            modifier = Modifier.height(30.dp)
                                         )
                                         Text(
                                             text = playListTitle,
@@ -161,12 +165,18 @@ fun CollectionListScreen(
                         }
                         processAction(CollectionListAction.HideDialog)
                     }) {
-                        Text(text = stringResource(id = R.string.positive_button))
+                        Text(
+                            text = stringResource(id = R.string.positive_button),
+                            color = Hover
+                        )
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { processAction(CollectionListAction.HideDialog) }) {
-                        Text(text = stringResource(id = R.string.negative_button))
+                        Text(
+                            text = stringResource(id = R.string.negative_button),
+                            color = Hover
+                        )
                     }
                 },
                 title = {
@@ -174,20 +184,32 @@ fun CollectionListScreen(
                         Text(
                             text = stringResource(id = R.string.dialog_title),
                             style = TextStyle(fontSize = 18.sp),
-                            color = Color.DarkGray
+                            color = Hover
                         )
                         Text(
                             text = stringResource(id = R.string.dialog_message),
                             style = TextStyle(fontSize = 16.sp),
-                            color = Color.DarkGray,
+                            color = Hover,
                             modifier = Modifier.padding(vertical = 5.dp)
                         )
-                        TextField(value = state.dialogText,
+                        TextField(
+                            value = state.dialogText,
                             onValueChange = { title ->
                                 processAction(CollectionListAction.SetTitleFromDialog(title))
-                            })
+                            },
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = TealLight,
+                                unfocusedContainerColor = TealLight,
+                                focusedTextColor = Hover,
+                                unfocusedTextColor = Hover,
+                                focusedIndicatorColor = Hover,
+                                unfocusedIndicatorColor = Hover,
+                                cursorColor = Hover
+                            )
+                        )
                     }
                 },
+                containerColor = TealLight
             )
         }
     }

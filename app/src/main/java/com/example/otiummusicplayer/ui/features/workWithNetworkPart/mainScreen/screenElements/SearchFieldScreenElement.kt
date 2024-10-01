@@ -3,6 +3,8 @@ package com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -10,8 +12,11 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.domain.EMPTY
@@ -26,6 +31,7 @@ fun SearchFieldScreenElement(
     state: NetworkSearchState,
     processAction: (action: NetworkSearchAction) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
     TextField(
         modifier = Modifier
             .fillMaxWidth()
@@ -62,6 +68,16 @@ fun SearchFieldScreenElement(
                 }
             }
         },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                processAction(NetworkSearchAction.SearchByQuery)
+                focusManager.clearFocus()
+            }
+        ),
         isError = state.isSearchError,
         singleLine = true,
         colors = TextFieldDefaults.colors(

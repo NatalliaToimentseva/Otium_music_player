@@ -4,8 +4,6 @@ sealed class PlayerTrackAction {
 
     data class Init(val tracks: String, val itemId: String) : PlayerTrackAction()
 
-    data class SetPlayed(val isPlayed: Boolean) : PlayerTrackAction()
-
     data class SetCurrentPosition(val position: Int) : PlayerTrackAction()
 
     data object DownloadTrack : PlayerTrackAction()
