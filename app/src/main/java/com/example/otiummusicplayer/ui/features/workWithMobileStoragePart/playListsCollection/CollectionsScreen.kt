@@ -1,5 +1,13 @@
 package com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,6 +48,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.LoadState
@@ -56,7 +66,10 @@ import com.example.otiummusicplayer.ui.theme.TealLight
 import com.example.otiummusicplayer.ui.theme.TealTr
 import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.utils.toast
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun CollectionListDestination(
     navHostController: NavHostController,
@@ -76,7 +89,8 @@ fun CollectionListDestination(
         })
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun CollectionListScreen(
     state: CollectionListState,
@@ -84,6 +98,17 @@ fun CollectionListScreen(
     goToTracks: (idPlaylist: Long) -> Unit,
     navigate: (route: String) -> Unit
 ) {
+    val permissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.READ_MEDIA_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+    )
+
+    LaunchedEffect(Unit) {
+        permissionsState.launchMultiplePermissionRequest()
+    }
+
     val playlists = state.playLists?.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
@@ -112,7 +137,8 @@ fun CollectionListScreen(
                 .padding(innerPadding)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(15.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -186,7 +212,7 @@ fun CollectionListScreen(
                 }
             }
         }
-        if(state.error != null) {
+        if (state.error != null) {
             LocalContext.current.toast(state.error)
             processAction(CollectionListAction.ClearError)
         }
@@ -251,6 +277,18 @@ fun CollectionListScreen(
         }
     }
 }
+//
+//private fun checkPermission(context: Context, permission: List<String>): Boolean {
+//    val isGranted = 0
+//    permission.forEach(val perm ->
+//    if (ContextCompat.checkSelfPermission(
+//            context,
+//            it
+//        ) == PackageManager.PERMISSION_GRANTED
+//    )) {
+//        ++isGranted
+//    }
+//}
 
 //@Preview(showBackground = true)
 //@Composable

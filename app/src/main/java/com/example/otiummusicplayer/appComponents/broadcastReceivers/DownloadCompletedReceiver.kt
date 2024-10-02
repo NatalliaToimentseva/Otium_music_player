@@ -1,10 +1,11 @@
-package com.example.otiummusicplayer.utils
+package com.example.otiummusicplayer.appComponents.broadcastReceivers
 
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.example.otiummusicplayer.R
+import com.example.otiummusicplayer.utils.toast
 
 class DownloadCompletedReceiver : BroadcastReceiver() {
 

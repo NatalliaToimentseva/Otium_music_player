@@ -1,6 +1,6 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen.playerElements
 
-import com.example.otiummusicplayer.utils.FileDownloader
+import com.example.otiummusicplayer.appComponents.services.FileDownloader
 import javax.inject.Inject
 
 class DownloadTrackUseCase @Inject constructor(

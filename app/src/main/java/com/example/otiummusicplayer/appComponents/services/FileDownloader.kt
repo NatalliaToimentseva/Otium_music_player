@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.utils
+package com.example.otiummusicplayer.appComponents.services
 
 interface FileDownloader {
 

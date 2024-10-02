@@ -6,8 +6,10 @@ import com.example.otiummusicplayer.repository.TracksDbRepository
 import com.example.otiummusicplayer.repository.repositoryImpl.NetworkRepositoryImpl
 import com.example.otiummusicplayer.repository.repositoryImpl.PlaylistDbRepositoryImpl
 import com.example.otiummusicplayer.repository.repositoryImpl.TracksDbRepositoryImpl
-import com.example.otiummusicplayer.utils.FileDownloaderImpl
-import com.example.otiummusicplayer.utils.FileDownloader
+import com.example.otiummusicplayer.appComponents.services.servicesImpl.FileDownloaderImpl
+import com.example.otiummusicplayer.appComponents.services.FileDownloader
+import com.example.otiummusicplayer.appComponents.contentProviders.MobileStorageMusicProvider
+import com.example.otiummusicplayer.appComponents.contentProviders.contentProvidersImpl.MobileStorageMusicProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,6 +43,12 @@ abstract class AppModule {
     abstract fun bindFileDownloader(
         fileDownloader: FileDownloaderImpl
     ): FileDownloader
+
+    @Binds
+    @Singleton
+    abstract fun bindMobileStorageMusicProvider(
+        mobileStorageMusicProvider: MobileStorageMusicProviderImpl
+    ): MobileStorageMusicProvider
 }
 
 
