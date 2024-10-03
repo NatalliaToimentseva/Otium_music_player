@@ -166,7 +166,7 @@ class PlayerViewModel @Inject constructor(
     private fun setIfFavorite() {
         viewModelScope.launch(Dispatchers.IO) {
             state.value.currentTrack?.let { track ->
-                if (track.isFavorite) {
+                if (track.isFavorite == true) {
                     state.tryEmit(state.value.copy(currentTrack = track.copy(isFavorite = false)))
                     deleteFromFavoriteUseCase.deleteTrackFromFavorite(track)
                 } else {
@@ -179,7 +179,7 @@ class PlayerViewModel @Inject constructor(
 
     private fun downloadTrack() {
         state.value.currentTrack?.let { track ->
-            downloadTrackUseCase.downloadTrack(track.audioDownload)
+            track.audioDownload?.let { downloadTrackUseCase.downloadTrack(it) }
         }
     }
 

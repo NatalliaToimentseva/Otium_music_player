@@ -1,5 +1,7 @@
 package com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.screens
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,11 +32,13 @@ import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.d
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.domain.NetworkSearchState
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.screenElements.AllDataScreenElement
 import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
-import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.screenElements.FavoriteScreenElement
+import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.ui.theme.White
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,6 +64,7 @@ fun NetworkSearchDestination(
         })
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NetworkSearchScreen(
     state: NetworkSearchState,
@@ -73,6 +78,17 @@ fun NetworkSearchScreen(
     val selectedTabIndex = remember {
         derivedStateOf { pagerState.currentPage }
     }
+    val permissionsState = rememberMultiplePermissionsState(
+        permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(
+                Manifest.permission.READ_MEDIA_AUDIO,
+            )
+        } else {
+            listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+            )
+        }
+    )
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -81,7 +97,13 @@ fun NetworkSearchScreen(
             .fillMaxSize()
             .padding(10.dp),
         containerColor = Graphite,
-        bottomBar = { BottomNavigationScreenElement(Route.NetworkSearch, navigate) }
+        bottomBar = {
+            BottomNavigationScreenElement(
+                Route.NetworkSearch,
+                permissionsState,
+                navigate
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
@@ -122,7 +144,7 @@ fun NetworkSearchScreen(
                 if (page == 0) {
                     AllDataScreenElement(state, processAction, goTrackList, goToPlayer)
                 } else {
-                    FavoriteScreenElement(state, goToPlayer)
+                    state.favoriteList?.let { TracksListElement(it, goToPlayer) }
                 }
             }
         }

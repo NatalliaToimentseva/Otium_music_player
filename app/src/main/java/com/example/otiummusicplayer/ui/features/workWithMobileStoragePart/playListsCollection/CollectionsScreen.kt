@@ -4,10 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -58,6 +54,7 @@ import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgre
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.domain.CollectionListAction
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.domain.CollectionListState
 import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
+import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.permissionRequesElement.MultiplePermissionDialog
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.FloatingButton
 import com.example.otiummusicplayer.ui.theme.Graphite
@@ -69,7 +66,6 @@ import com.example.otiummusicplayer.utils.toast
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun CollectionListDestination(
     navHostController: NavHostController,
@@ -79,17 +75,19 @@ fun CollectionListDestination(
 //    val gson = GsonBuilder().create()
 //    val tracks = state.tracks ?: arrayListOf()
 //    val tracksList = gson.toJson(tracks)
-    CollectionListScreen(state = state, processAction = viewModel::processAction, { itemId ->
+    CollectionListScreen(
+        state = state,
+        processAction = viewModel::processAction,
+        goToTracks = { itemId ->
 //        navHostController.navigate(
 //            Route.PlayTrackScreen.selectRoute(itemId = itemId, tracks = tracksList)
 //        )
-    },
-        { route ->
+        },
+        navigate = { route ->
             navHostController.navigate(route)
         })
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun CollectionListScreen(
@@ -99,23 +97,35 @@ fun CollectionListScreen(
     navigate: (route: String) -> Unit
 ) {
     val permissionsState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            Manifest.permission.READ_MEDIA_AUDIO,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
+        permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(
+                Manifest.permission.READ_MEDIA_AUDIO,
+            )
+        } else {
+            listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+            )
+        }
     )
-
     LaunchedEffect(Unit) {
-        permissionsState.launchMultiplePermissionRequest()
+        if (!permissionsState.allPermissionsGranted) {
+            processAction(CollectionListAction.IsShowPermissionDialog(true))
+        }
     }
-
     val playlists = state.playLists?.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
             .background(Graphite)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(10.dp),
         containerColor = Graphite,
-        bottomBar = { BottomNavigationScreenElement(Route.PlaylistsScreen, navigate) },
+        bottomBar = {
+            BottomNavigationScreenElement(
+                Route.PlaylistsScreen,
+                permissionsState,
+                navigate
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { processAction(CollectionListAction.ShowDialog) },
@@ -132,7 +142,6 @@ fun CollectionListScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .background(Graphite)
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
@@ -172,6 +181,7 @@ fun CollectionListScreen(
                                     Row(verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier
                                             .fillMaxWidth()
+                                            .padding(bottom = 2.dp)
                                             .background(
                                                 if (state.selectedItemsList.contains(item)) {
                                                     TealTr
@@ -215,6 +225,13 @@ fun CollectionListScreen(
         if (state.error != null) {
             LocalContext.current.toast(state.error)
             processAction(CollectionListAction.ClearError)
+        }
+        if (state.showPermissionDialog) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                MultiplePermissionDialog(permissionsState) { isShow ->
+                    processAction(CollectionListAction.IsShowPermissionDialog(isShow))
+                }
+            }
         }
         if (state.isShowDialog) {
             AlertDialog(
@@ -277,35 +294,17 @@ fun CollectionListScreen(
         }
     }
 }
-//
-//private fun checkPermission(context: Context, permission: List<String>): Boolean {
-//    val isGranted = 0
-//    permission.forEach(val perm ->
-//    if (ContextCompat.checkSelfPermission(
-//            context,
-//            it
-//        ) == PackageManager.PERMISSION_GRANTED
-//    )) {
-//        ++isGranted
-//    }
-//}
 
-//@Preview(showBackground = true)
-//@Composable
-//fun TrackListPreview() {
-//    OtiumMusicPlayerTheme {
-//        TrackListScreen(
-//            id = "1",
-//            state = TrackLisState(
-//                tracks = arrayListOf(
-//                    TrackModel(
-//                        "", "Test", "", "", 100, "", "",
-//                        "", "", false, "", false
-//                    )
-//                )
-//            ),
-//            {}, {}, { _ ->
-//            }
-//        )
-//    }
-//}
+private fun checkPermission(context: Context, permission: List<String>): Boolean {
+    var denied = 0
+    for (p in permission) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                p
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            denied++
+        }
+    }
+    return denied == 0
+}

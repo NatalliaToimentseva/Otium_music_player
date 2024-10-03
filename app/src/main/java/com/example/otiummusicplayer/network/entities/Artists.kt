@@ -7,9 +7,7 @@ data class Artists(
 )
 
 fun Artists.toArtistModelList(): List<ArtistModel> {
-    val artists = arrayListOf<ArtistModel>()
-    for (artist in this.results) {
-        artists.add(artist.toArtistModel())
+    return this.results.map { artistData ->
+        artistData.toArtistModel()
     }
-    return artists
 }

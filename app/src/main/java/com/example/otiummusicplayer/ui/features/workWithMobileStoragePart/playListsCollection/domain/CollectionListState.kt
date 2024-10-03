@@ -9,5 +9,6 @@ data class CollectionListState(
     val selectedItemsList: List<PlayerPlayListModel> = arrayListOf(),
     val isShowDialog: Boolean = false,
     val dialogText: String = "",
-    val error: String? = null
+    val error: String? = null,
+    val showPermissionDialog: Boolean = false
 )

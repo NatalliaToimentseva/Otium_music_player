@@ -105,20 +105,24 @@ fun PlayTrackScreen(
                                 modifier = Modifier.padding(start = 10.dp, top = 10.dp)
                             )
                         }
-                        Button(
-                            onClick = {
-                               processAction(PlayerTrackAction.DownloadTrack)
-                                context.toast("Downloads was started, please wait...")
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Graphite),
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .padding(end = 45.dp, top = 15.dp)
-                        ) {
-                            Image(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_download),
-                                contentDescription = stringResource(id = R.string.btn_download),
-                            )
+                        state.currentTrack?.isDownloadAllowed?.let { allowed ->
+                            if (allowed) {
+                                Button(
+                                    onClick = {
+                                        processAction(PlayerTrackAction.DownloadTrack)
+                                        context.toast("Downloads was started, please wait...")
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Graphite),
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .padding(end = 45.dp, top = 15.dp)
+                                ) {
+                                    Image(
+                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_download),
+                                        contentDescription = stringResource(id = R.string.btn_download),
+                                    )
+                                }
+                            }
                         }
                         IconButton(
                             onClick = {
@@ -128,16 +132,18 @@ fun PlayTrackScreen(
                                 .align(Alignment.CenterEnd)
                                 .padding(end = 15.dp, top = 5.dp)
                         ) {
-                            state.currentTrack?.run {
-                                Image(
-                                    imageVector = if (isFavorite) {
-                                        ImageVector.vectorResource(id = R.drawable.like)
-                                    } else {
-                                        ImageVector.vectorResource(id = R.drawable.not_like)
-                                    },
-                                    contentDescription = stringResource(id = R.string.btn_back),
-                                    modifier = Modifier.padding(start = 10.dp, top = 10.dp)
-                                )
+                            state.currentTrack?.let { track ->
+                                track.isFavorite?.let { favorite ->
+                                    Image(
+                                        imageVector = if (favorite) {
+                                            ImageVector.vectorResource(id = R.drawable.like)
+                                        } else {
+                                            ImageVector.vectorResource(id = R.drawable.not_like)
+                                        },
+                                        contentDescription = stringResource(id = R.string.btn_back),
+                                        modifier = Modifier.padding(start = 10.dp, top = 10.dp)
+                                    )
+                                }
                             }
                         }
                     }

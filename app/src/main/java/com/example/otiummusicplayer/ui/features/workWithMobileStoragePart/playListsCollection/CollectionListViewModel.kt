@@ -26,7 +26,7 @@ class CollectionListViewModel @Inject constructor(
 
     init {
         processAction(CollectionListAction.GetAllPlaylists)
-        viewModelScope.launch (Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             mobileStorageTracksProvider.getTracksByFolderId(540528482)
         }
     }
@@ -41,6 +41,7 @@ class CollectionListViewModel @Inject constructor(
             is CollectionListAction.HideDialog -> hideDialog()
             is CollectionListAction.SelectItem -> selectItem(action.item)
             is CollectionListAction.ClearError -> clearError()
+            is CollectionListAction.IsShowPermissionDialog -> showPermissionDialog(action.isShow)
         }
     }
 
@@ -102,6 +103,10 @@ class CollectionListViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun showPermissionDialog(isShow: Boolean) {
+        state.tryEmit(state.value.copy(showPermissionDialog = isShow))
     }
 
     private fun clearError() {

@@ -7,9 +7,7 @@ data class Album(
 )
 
 fun Album.toAlbumModelList(): List<AlbumModel> {
-    val albums = arrayListOf<AlbumModel>()
-    for (album in this.results) {
-        albums.add(album.toAlbumModel())
+    return this.results.map { albumData ->
+        albumData.toAlbumModel()
     }
-    return albums
 }

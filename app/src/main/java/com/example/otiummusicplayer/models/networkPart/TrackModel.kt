@@ -8,16 +8,16 @@ import kotlinx.parcelize.Parcelize
 data class TrackModel(
     val id: String,
     val name: String,
-    val image: String,
+    val image: String?,
     val audio: String,
     val duration: Int,
     val albumName: String,
-    val albumId: String,
+    val albumId: String?,
     val artistName: String,
-    val audioDownload: String,
-    val isDownloadAllowed: Boolean,
-    val shareUrl: String,
-    val isFavorite: Boolean
+    val audioDownload: String?,
+    val isDownloadAllowed: Boolean?,
+    val shareUrl: String?,
+    val isFavorite: Boolean?
 ) : Parcelable
 
 fun TrackModel.toTrackDbEntity(): TracksDbEntity {

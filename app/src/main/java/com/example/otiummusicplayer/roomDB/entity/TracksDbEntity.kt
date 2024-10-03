@@ -21,7 +21,7 @@ data class TracksDbEntity(
     @ColumnInfo("track_name")
     val trackName: String,
     @ColumnInfo("track_image")
-    val trackImage: String,
+    val trackImage: String?,
     @ColumnInfo("track_audio")
     val trackAudio: String,
     @ColumnInfo("duration")
@@ -29,17 +29,17 @@ data class TracksDbEntity(
     @ColumnInfo("album_name")
     val albumName: String,
     @ColumnInfo("album_id")
-    val albumId: String,
+    val albumId: String?,
     @ColumnInfo("artist_name")
     val artistName: String,
     @ColumnInfo("audio_download")
-    val audioDownload: String,
+    val audioDownload: String?,
     @ColumnInfo("is_download_allowed")
-    val isDownloadAllowed: Boolean,
+    val isDownloadAllowed: Boolean?,
     @ColumnInfo("share_url")
-    val shareUrl: String,
+    val shareUrl: String?,
     @ColumnInfo("favorite")
-    val isFavorite: Boolean
+    val isFavorite: Boolean?
 )
 
 fun TracksDbEntity.toTrackModel(): TrackModel {

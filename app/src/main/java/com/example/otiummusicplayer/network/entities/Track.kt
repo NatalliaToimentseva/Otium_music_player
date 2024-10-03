@@ -6,9 +6,7 @@ data class Track(
 )
 
 fun Track.toTrackModelList(): List<TrackModel> {
-    val tracks = arrayListOf<TrackModel>()
-    for (track in this.results) {
-        tracks.add(track.toTrackModel())
+    return this.results.map { trackData ->
+        trackData.toTrackModel()
     }
-    return tracks
 }

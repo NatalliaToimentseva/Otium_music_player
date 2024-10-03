@@ -10,6 +10,8 @@ sealed class CollectionListAction {
 
     data class SelectItem(val item: PlayerPlayListModel) : CollectionListAction()
 
+    data class IsShowPermissionDialog(val isShow: Boolean) : CollectionListAction()
+
     data object DeletePlaylist : CollectionListAction()
 
     data object GetAllPlaylists : CollectionListAction()

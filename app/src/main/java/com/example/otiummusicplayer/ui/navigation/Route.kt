@@ -4,6 +4,10 @@ sealed class Route(val route: String) {
 
     data object PlaylistsScreen : Route("PlaylistsScreen")
 
+    data object FoldersScreen : Route("FoldersScreen")
+
+    data object MobileStorageTracksScreen : Route("MobileStorageTracksScreen")
+
     data object NetworkSearch : Route("NetworkSearchScreen")
 
     data object TrackList : Route("TrackList/{id}") {

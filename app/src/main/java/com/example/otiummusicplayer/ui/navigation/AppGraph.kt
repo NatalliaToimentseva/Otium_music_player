@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.otiummusicplayer.ui.features.playerControlScreen.PlayTrackDestination
+import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.allTracks.MobileStorageTracksScreenDestination
+import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.folders.FoldersScreenDestination
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.CollectionListDestination
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.screens.NetworkSearchDestination
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.tracksScreen.TrackListDestination
@@ -23,6 +25,12 @@ fun AppGraph(
         composable(Route.PlaylistsScreen.route) {
             CollectionListDestination(navHostController)
         }
+        composable(Route.FoldersScreen.route) {
+            FoldersScreenDestination(navHostController)
+        }
+        composable(Route.MobileStorageTracksScreen.route) {
+            MobileStorageTracksScreenDestination(navHostController)
+        }
         composable(Route.NetworkSearch.route) {
             NetworkSearchDestination(navHostController)
         }
@@ -38,7 +46,7 @@ fun AppGraph(
             Route.PlayTrackScreen.route,
             arguments = listOf(
                 navArgument(TRACK_ITEM_ID) { type = NavType.StringType },
-                navArgument(TRACKS_LIST) { type = NavType.StringType}
+                navArgument(TRACKS_LIST) { type = NavType.StringType }
             )
         ) { backStack ->
             backStack.arguments?.run {

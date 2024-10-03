@@ -24,4 +24,6 @@
     <string name="dialog_message">Add playlist title:</string>
     <string name="folders">Folders</string>
     <string name="tracks">Tracks</string>
+    <string name="permission_request">We need photos and media permission to show yours music. Without this permission only network search will be available.</string>
+    <string name="permission">Permission</string>
 </resources>

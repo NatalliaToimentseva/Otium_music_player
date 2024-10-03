@@ -3,7 +3,6 @@ package com.example.otiummusicplayer.ui.features.generalScreenElements
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -17,16 +16,21 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.otiummusicplayer.R
+import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.allTracks.MobileStorageTracksScreen
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.Hover
 import com.example.otiummusicplayer.ui.theme.TealTr
 import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.ui.theme.WhiteUnselected
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BottomNavigationScreenElement(
     selectedRoute: Route,
+    permissionsState: MultiplePermissionsState,
     navigate: (route: String) -> Unit
 ) {
     NavigationBar(
@@ -63,9 +67,10 @@ fun BottomNavigationScreenElement(
         )
         NavigationBarItem(
             alwaysShowLabel = true,
-            selected = false,
+            selected = selectedRoute == Route.FoldersScreen,
+            enabled = permissionsState.allPermissionsGranted,
             onClick = {
-//                navigate.invoke(Route.NetworkSearch.route)
+                navigate.invoke(Route.FoldersScreen.route)
             },
             icon = {
                 Image(
@@ -88,9 +93,10 @@ fun BottomNavigationScreenElement(
         )
         NavigationBarItem(
             alwaysShowLabel = true,
-            selected = false,
+            selected = selectedRoute == Route.MobileStorageTracksScreen,
+            enabled = permissionsState.allPermissionsGranted,
             onClick = {
-//                navigate.invoke(Route.NetworkSearch.route)
+                navigate.invoke(Route.MobileStorageTracksScreen.route)
             },
             icon = {
                 Image(
