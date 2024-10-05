@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.utils.formatTimeMls
 
 @Entity(
     tableName = "Tracks",
@@ -39,23 +40,27 @@ data class TracksDbEntity(
     @ColumnInfo("share_url")
     val shareUrl: String?,
     @ColumnInfo("favorite")
-    val isFavorite: Boolean?
+    val isFavorite: Boolean?,
+    @ColumnInfo("playlistId")
+    val playlistId: Boolean?
 )
 
 fun TracksDbEntity.toTrackModel(): TrackModel {
     return TrackModel(
-        id,
-        trackName,
-        trackImage,
-        trackAudio,
-        duration,
-        albumName,
-        albumId,
-        artistName,
-        audioDownload,
-        isDownloadAllowed,
-        shareUrl,
-        isFavorite
+        id = id,
+        name = trackName,
+        image = trackImage,
+        audio = trackAudio,
+//        null,
+        duration = formatTimeMls(duration),
+        albumName = albumName,
+        albumId = albumId,
+        artistName = artistName,
+        audioDownload = audioDownload,
+        isDownloadAllowed = isDownloadAllowed,
+        shareUrl = shareUrl,
+        isFavorite = isFavorite,
+        playlistId = playlistId
     )
 }
 

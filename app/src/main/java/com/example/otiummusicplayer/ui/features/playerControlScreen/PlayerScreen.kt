@@ -45,6 +45,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
 import com.example.otiummusicplayer.ui.features.playerControlScreen.playerElements.AudioPlayerControls
@@ -112,7 +113,7 @@ fun PlayTrackScreen(
                                         processAction(PlayerTrackAction.DownloadTrack)
                                         context.toast("Downloads was started, please wait...")
                                     },
-                                    colors = ButtonDefaults.buttonColors(containerColor = Graphite),
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background),
                                     modifier = Modifier
                                         .align(Alignment.CenterEnd)
                                         .padding(end = 45.dp, top = 15.dp)
@@ -151,9 +152,9 @@ fun PlayTrackScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(70.dp)
-                    .background(Graphite)
+                    .background(MaterialTheme.colorScheme.background)
                     .clip(RoundedCornerShape(8.dp)),
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Graphite)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background)
             )
         }
     ) { padding ->
@@ -161,7 +162,7 @@ fun PlayTrackScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Graphite)
+                .background(MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState())
         ) {
             Box(
@@ -171,8 +172,8 @@ fun PlayTrackScreen(
             ) {
                 AsyncImage(
                     model = state.currentTrack?.image,
-                    placeholder = painterResource(id = R.drawable.ic_sound),
-                    error = painterResource(id = R.drawable.ic_sound),
+                    placeholder = painterResource(id = R.drawable.bg_sound),
+                    error = painterResource(id = R.drawable.bg_sound),
                     contentDescription = stringResource(id = R.string.album_im),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -188,8 +189,8 @@ fun PlayTrackScreen(
                         .background(
                             Brush.verticalGradient(
                                 0.05f to TealTr,
-                                0.8f to GraphiteTr,
-                                0.02f to Graphite,
+                                0.8f to MaterialTheme.colorScheme.onPrimary,
+                                0.02f to MaterialTheme.colorScheme.background,
                                 startY = 70f,
                                 endY = 0f
                             )
@@ -202,9 +203,9 @@ fun PlayTrackScreen(
                         .align(Alignment.BottomCenter)
                         .background(
                             Brush.verticalGradient(
-                                0.05f to GradientTr,
-                                0.4f to GraphiteTr,
-                                0.3f to Graphite,
+                                0.05f to MaterialTheme.colorScheme.onSurfaceVariant,
+                                0.4f to MaterialTheme.colorScheme.onPrimary,
+                                0.3f to MaterialTheme.colorScheme.background,
                                 startY = 0f,
                                 endY = 210f
                             )
@@ -213,7 +214,7 @@ fun PlayTrackScreen(
             }
             Text(
                 text = state.currentTrack?.name ?: stringResource(id = R.string.no_title),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -221,9 +222,9 @@ fun PlayTrackScreen(
                     .height(70.dp)
                     .background(
                         Brush.verticalGradient(
-                            0.05f to GradientTr,
-                            0.4f to GraphiteTr,
-                            0.3f to Graphite,
+                            0.05f to MaterialTheme.colorScheme.onSurfaceVariant,
+                            0.4f to MaterialTheme.colorScheme.onPrimary,
+                            0.3f to MaterialTheme.colorScheme.background,
                             startY = 0f,
                             endY = 210f
                         )
@@ -231,14 +232,7 @@ fun PlayTrackScreen(
                     .padding(start = 20.dp, bottom = 10.dp)
             )
             AudioPlayerControls(state, processAction)
-            if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .width(50.dp)
-                        .align(Alignment.CenterHorizontally),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+            if (state.isLoading) { ShowProgress(modifier = null)
             }
         }
     }
@@ -257,7 +251,7 @@ fun PlayTrackScreenPreview() {
                         "",
                         name = "Карев А.В.(VIGOR) - Время героев",
                         image = "https://cs13.pikabu.ru/post_img/big/2023/03/03/6/1677836243167140809.png",
-                        "", 1000, "", "", "", "", false, "", false
+                        "", "01:00", "", "", "", "", false, "", false, null
                     )
                 )
             ),

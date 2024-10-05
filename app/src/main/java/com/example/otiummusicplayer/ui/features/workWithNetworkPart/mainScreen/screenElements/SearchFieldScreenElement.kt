@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -23,8 +24,6 @@ import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.d
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.domain.NetworkSearchAction
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.domain.NetworkSearchState
 import com.example.otiummusicplayer.ui.theme.ErrorRed
-import com.example.otiummusicplayer.ui.theme.Graphite
-import com.example.otiummusicplayer.ui.theme.White
 
 @Composable
 fun SearchFieldScreenElement(
@@ -81,14 +80,16 @@ fun SearchFieldScreenElement(
         isError = state.isSearchError,
         singleLine = true,
         colors = TextFieldDefaults.colors(
-            focusedTextColor = White,
-            errorTextColor = ErrorRed,
-            unfocusedTextColor = White,
-            focusedContainerColor = Graphite,
-            errorContainerColor = Graphite,
-            unfocusedContainerColor = Graphite,
-            cursorColor = White,
-            focusedIndicatorColor = White
+            focusedTextColor = MaterialTheme.colorScheme.primary,
+            errorPlaceholderColor = MaterialTheme.colorScheme.onErrorContainer,
+            unfocusedTextColor = MaterialTheme.colorScheme.primary,
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            errorContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+            cursorColor = MaterialTheme.colorScheme.primary,
+            focusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.onBackground,
+            errorIndicatorColor = MaterialTheme.colorScheme.onErrorContainer
         )
     )
 }

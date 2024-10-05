@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -16,12 +17,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.otiummusicplayer.R
-import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.allTracks.MobileStorageTracksScreen
 import com.example.otiummusicplayer.ui.navigation.Route
-import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.Hover
 import com.example.otiummusicplayer.ui.theme.TealTr
-import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.ui.theme.WhiteUnselected
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -37,7 +35,7 @@ fun BottomNavigationScreenElement(
         modifier = Modifier
             .fillMaxWidth()
             .height(130.dp),
-        containerColor = Graphite,
+        containerColor = MaterialTheme.colorScheme.background,
         contentColor = WhiteUnselected,
     ) {
         NavigationBarItem(
@@ -62,7 +60,7 @@ fun BottomNavigationScreenElement(
             colors = NavigationBarItemDefaults.colors(
                 indicatorColor = TealTr,
                 selectedTextColor = Hover,
-                unselectedTextColor = White
+                unselectedTextColor = MaterialTheme.colorScheme.primary
             )
         )
         NavigationBarItem(
@@ -88,7 +86,7 @@ fun BottomNavigationScreenElement(
             colors = NavigationBarItemDefaults.colors(
                 indicatorColor = TealTr,
                 selectedTextColor = Hover,
-                unselectedTextColor = White
+                unselectedTextColor = MaterialTheme.colorScheme.primary
             )
         )
         NavigationBarItem(
@@ -114,7 +112,7 @@ fun BottomNavigationScreenElement(
             colors = NavigationBarItemDefaults.colors(
                 indicatorColor = TealTr,
                 selectedTextColor = Hover,
-                unselectedTextColor = White
+                unselectedTextColor = MaterialTheme.colorScheme.primary
             )
         )
         NavigationBarItem(
@@ -139,7 +137,7 @@ fun BottomNavigationScreenElement(
             colors = NavigationBarItemDefaults.colors(
                 indicatorColor = TealTr,
                 selectedTextColor = Hover,
-                unselectedTextColor = White
+                unselectedTextColor = MaterialTheme.colorScheme.primary
             )
         )
     }

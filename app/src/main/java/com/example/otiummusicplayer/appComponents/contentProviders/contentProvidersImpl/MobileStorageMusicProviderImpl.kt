@@ -26,7 +26,10 @@ class MobileStorageMusicProviderImpl @Inject constructor(
     )
 
     @SuppressLint("Range")
-    override suspend fun getAllStorageTracks(limit: Int, offset: Int): List<MobileStorageTrackModel> {
+    override suspend fun getAllStorageTracks(
+        limit: Int,
+        offset: Int
+    ): List<MobileStorageTrackModel> {
         val listOfTracks = mutableListOf<MobileStorageTrackModel>()
 
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} = ?"
@@ -44,13 +47,18 @@ class MobileStorageMusicProviderImpl @Inject constructor(
                     break
                 } else {
                     val id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                    val title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                    val title =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
                     val name =
                         cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                    val album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                    val artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                    val duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                    val dirId = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.BUCKET_ID))
+                    val album =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
+                    val artist =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                    val duration =
+                        cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    val dirId =
+                        cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.BUCKET_ID))
                     val uri = ContentUris.withAppendedId(
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                         id
@@ -95,7 +103,11 @@ class MobileStorageMusicProviderImpl @Inject constructor(
     }
 
     @SuppressLint("Range")
-    override suspend fun getTracksByFolderId(folderId: Int): List<MobileStorageTrackModel> {
+    override suspend fun getTracksByFolderId(
+        folderId: Int,
+        limit: Int,
+        offset: Int
+    ): List<MobileStorageTrackModel> {
         val listOfFoldersTracks = mutableListOf<MobileStorageTrackModel>()
         val selection = "${MediaStore.Audio.Media.BUCKET_ID} = ?"
         val selectionArguments = arrayOf("$folderId")
@@ -106,24 +118,34 @@ class MobileStorageMusicProviderImpl @Inject constructor(
             selectionArguments,
             null
         )?.use { cursor ->
-            while (cursor.moveToNext()) {
-                val id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
-                val title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
-                val name =
-                    cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                val album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
-                val artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-                val duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
-                val dirId = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.BUCKET_ID))
-                val uri = ContentUris.withAppendedId(
-                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-                listOfFoldersTracks.add(
-                    MobileStorageTrackModel(
-                        id, title, name, album, artist, duration, uri, dirId
+            cursor.moveToPosition(offset)
+            for (i in 0 until limit) {
+                if (!cursor.moveToNext()) {
+                    break
+                } else {
+                    val id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID))
+                    val title =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE))
+                    val name =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                    val album =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))
+                    val artist =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
+                    val duration =
+                        cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+                    val dirId =
+                        cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.BUCKET_ID))
+                    val uri = ContentUris.withAppendedId(
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        id
                     )
-                )
+                    listOfFoldersTracks.add(
+                        MobileStorageTrackModel(
+                            id, title, name, album, artist, duration, uri, dirId
+                        )
+                    )
+                }
             }
         }
         return listOfFoldersTracks

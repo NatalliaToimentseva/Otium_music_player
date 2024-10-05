@@ -7,7 +7,6 @@ import com.example.otiummusicplayer.models.mobilePart.PlayerPlayListModel
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.domain.CollectionListAction
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.domain.CollectionListState
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.domain.PlaylistErrors
-import com.example.otiummusicplayer.appComponents.contentProviders.MobileStorageMusicProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,17 +17,13 @@ import javax.inject.Inject
 class CollectionListViewModel @Inject constructor(
     private val getPlaylistUseCase: GetPlaylistUseCase,
     private val addPlayListUseCase: AddPlayListUseCase,
-    private val deletePlaylistUseCase: DeletePlaylistUseCase,
-    private val mobileStorageTracksProvider: MobileStorageMusicProvider
+    private val deletePlaylistUseCase: DeletePlaylistUseCase
 ) : ViewModel() {
 
     val state = MutableStateFlow(CollectionListState())
 
     init {
         processAction(CollectionListAction.GetAllPlaylists)
-        viewModelScope.launch(Dispatchers.IO) {
-            mobileStorageTracksProvider.getTracksByFolderId(540528482)
-        }
     }
 
     fun processAction(action: CollectionListAction) {

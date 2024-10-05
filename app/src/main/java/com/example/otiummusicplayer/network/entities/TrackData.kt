@@ -1,32 +1,47 @@
 package com.example.otiummusicplayer.network.entities
 
 import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.utils.formatTimeSec
+import com.google.gson.annotations.SerializedName
 
 data class TrackData(
+    @SerializedName("id")
     val id: String,
-    val name: String,
+    @SerializedName("name")
+    val title: String,
+    @SerializedName("image")
     val image: String,
-    val audio: String,
+    @SerializedName("audio")
+    val audioStream: String,
+    @SerializedName("duration")
     val duration: Int,
-    val album_name: String,
-    val album_id: String,
-    val artist_name: String,
-    val audiodownload: String,
-    val audiodownload_allowed: Boolean,
-    val shareurl: String
+    @SerializedName("album_name")
+    val albumTitle: String,
+    @SerializedName("album_id")
+    val albumId: String,
+    @SerializedName("artist_name")
+    val artistName: String,
+    @SerializedName("audiodownload")
+    val urlToDownload: String,
+    @SerializedName("audiodownload_allowed")
+    val isDownloadAllowed: Boolean,
+    @SerializedName("shareurl")
+    val urlToShare: String
 )
 
 fun TrackData.toTrackModel(): TrackModel = TrackModel(
     id = id,
-    name = name,
+    name = title,
     image = image,
-    audio = audio,
-    duration = duration,
-    albumName = album_name,
-    albumId = album_id,
-    artistName = artist_name,
-    audioDownload = audiodownload,
-    isDownloadAllowed = audiodownload_allowed,
-    shareUrl = shareurl,
-    isFavorite = false
+    audio = audioStream,
+//    uri = null,
+    duration = formatTimeSec(duration),
+    albumName = albumTitle,
+    albumId = albumId,
+    artistName = artistName,
+    audioDownload = urlToDownload,
+    isDownloadAllowed = isDownloadAllowed,
+    shareUrl = urlToShare,
+    isFavorite = false,
+    playlistId = null
 )

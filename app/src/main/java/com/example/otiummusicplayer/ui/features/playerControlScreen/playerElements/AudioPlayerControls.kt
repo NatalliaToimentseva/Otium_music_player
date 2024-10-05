@@ -1,6 +1,7 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen.playerElements
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,9 +26,8 @@ import androidx.compose.ui.unit.dp
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
-import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.utils.formatTimeMls
-import com.example.otiummusicplayer.utils.formatTimeSec
+import com.example.otiummusicplayer.utils.formatTimeToMls
 import kotlinx.coroutines.delay
 
 
@@ -51,15 +51,18 @@ fun AudioPlayerControls(
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Text(
                 text = formatTimeMls(state.currentPosition),
-                color = White,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = formatTimeSec(state.currentTrack?.duration ?: 0),
-                color = White,
+                text = state.currentTrack?.duration ?: "00:00",
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -68,23 +71,25 @@ fun AudioPlayerControls(
             onValueChange = { value ->
                 processAction(PlayerTrackAction.SetCurrentPosition(value.toInt()))
             },
-            valueRange = 0f..((state.currentTrack?.duration?.times(1000))?.toFloat() ?: 0f),
+            valueRange = 0f..formatTimeToMls(state.currentTrack?.duration).toFloat(),
             onValueChangeFinished = {
                 state.mediaPlayer?.seekTo(state.currentPosition)
             },
             colors = SliderDefaults.colors(
-                thumbColor = White,
-                activeTrackColor = White,
-                inactiveTrackColor = Color.Black
+                thumbColor = MaterialTheme.colorScheme.secondary,
+                activeTrackColor = MaterialTheme.colorScheme.secondary,
+                inactiveTrackColor = MaterialTheme.colorScheme.background
             ),
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(top = 20.dp, bottom = 10.dp)
         )
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(top = 10.dp)
         ) {
             IconButton(onClick = {}) {

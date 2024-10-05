@@ -3,12 +3,16 @@ package com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.
 import android.Manifest
 import android.os.Build
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -34,9 +38,7 @@ import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.s
 import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
 import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
 import com.example.otiummusicplayer.ui.navigation.Route
-import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
-import com.example.otiummusicplayer.ui.theme.White
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.launch
@@ -93,10 +95,10 @@ fun NetworkSearchScreen(
 
     Scaffold(
         modifier = Modifier
-            .background(Graphite)
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(10.dp),
-        containerColor = Graphite,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             BottomNavigationScreenElement(
                 Route.NetworkSearch,
@@ -110,12 +112,12 @@ fun NetworkSearchScreen(
         ) {
             TabRow(
                 selectedTabIndex = selectedTabIndex.value,
-                containerColor = Graphite,
-                contentColor = White,
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.primary,
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex.value]),
-                        color = White
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 },
                 modifier = Modifier
@@ -124,7 +126,7 @@ fun NetworkSearchScreen(
             ) {
                 state.tabsName.forEachIndexed { index, text ->
                     Tab(selected = selectedTabIndex.value == index,
-                        selectedContentColor = Color.White,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
                         unselectedContentColor = Color.DarkGray,
                         onClick = {
                             coroutineScope.launch {
@@ -144,7 +146,19 @@ fun NetworkSearchScreen(
                 if (page == 0) {
                     AllDataScreenElement(state, processAction, goTrackList, goToPlayer)
                 } else {
-                    state.favoriteList?.let { TracksListElement(it, goToPlayer) }
+                    state.favoriteList?.let {
+                        Box(modifier = Modifier.padding(top = 10.dp)) {
+                            TracksListElement(
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .width(100.dp)
+                                    .padding(bottom = 10.dp),
+                                tracksList = it,
+                                goToPlayer = goToPlayer,
+                                null, null
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,15 +26,13 @@ import coil.compose.AsyncImage
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.models.networkPart.ArtistModel
 import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
-import com.example.otiummusicplayer.ui.theme.Graphite
-import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.utils.toast
 
 @Composable
 fun ArtistsList(artists: LazyPagingItems<ArtistModel>?, onClick: (id: String) -> Unit) {
     Box(
         modifier = Modifier
-            .background(Graphite)
+            .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 10.dp)
     ) {
         artists?.let { items ->
@@ -64,10 +63,11 @@ fun ArtistsList(artists: LazyPagingItems<ArtistModel>?, onClick: (id: String) ->
                                 Text(
                                     text = items[ind]?.name
                                         ?: stringResource(id = R.string.no_title),
-                                    fontSize = 18.sp,
-                                    color = White,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier
                                         .width(110.dp)
+                                        .padding(top = 5.dp)
                                 )
                             }
                         }

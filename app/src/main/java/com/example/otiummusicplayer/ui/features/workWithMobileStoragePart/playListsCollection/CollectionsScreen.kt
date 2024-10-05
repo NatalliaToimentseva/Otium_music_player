@@ -57,11 +57,9 @@ import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavi
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.permissionRequesElement.MultiplePermissionDialog
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.FloatingButton
-import com.example.otiummusicplayer.ui.theme.Graphite
 import com.example.otiummusicplayer.ui.theme.Hover
 import com.example.otiummusicplayer.ui.theme.TealLight
 import com.example.otiummusicplayer.ui.theme.TealTr
-import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.utils.toast
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -72,9 +70,6 @@ fun CollectionListDestination(
     viewModel: CollectionListViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-//    val gson = GsonBuilder().create()
-//    val tracks = state.tracks ?: arrayListOf()
-//    val tracksList = gson.toJson(tracks)
     CollectionListScreen(
         state = state,
         processAction = viewModel::processAction,
@@ -115,10 +110,10 @@ fun CollectionListScreen(
     val playlists = state.playLists?.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
-            .background(Graphite)
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(10.dp),
-        containerColor = Graphite,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             BottomNavigationScreenElement(
                 Route.PlaylistsScreen,
@@ -130,8 +125,8 @@ fun CollectionListScreen(
             FloatingActionButton(
                 onClick = { processAction(CollectionListAction.ShowDialog) },
                 shape = MaterialTheme.shapes.small.copy(CornerSize(40)),
-                containerColor = FloatingButton,
-                contentColor = White
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
@@ -153,8 +148,8 @@ fun CollectionListScreen(
             ) {
                 Text(
                     text = stringResource(id = R.string.playlist),
-                    fontSize = 26.sp,
-                    color = White,
+                    fontSize = 24.sp,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp)
                 )
                 if (state.selectedItemsList.isNotEmpty()) {
@@ -210,9 +205,9 @@ fun CollectionListScreen(
                                         )
                                         Text(
                                             text = item.playListTitle,
-                                            fontSize = 20.sp,
-                                            color = White,
-                                            modifier = Modifier.padding(10.dp)
+                                            fontSize = 16.sp,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                                         )
                                     }
                                 }

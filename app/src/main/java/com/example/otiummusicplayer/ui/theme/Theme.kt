@@ -11,17 +11,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Graphite,
-    secondary = White,
+    primary = White,
+    secondary = FloatingButton,
     tertiary = Teal,
-    onPrimary = GraphiteTr
+    onPrimary = GraphiteTr,
+    background = Graphite,
+    onSurfaceVariant = GradientTr,
+    onBackground = White,
+    onErrorContainer = ErrorRed,
+    onSecondaryContainer = WhiteTr
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Graphite,
-    secondary = White,
+    secondary = Hover,
     tertiary = Teal,
-    onPrimary = GraphiteTr
+    onPrimary = LightTr,
+    background = BackgroundWhite,
+    onSurfaceVariant = GradientLightTr,
+    onBackground = Hover,
+    onErrorContainer = ErrorRed,
+    onSecondaryContainer = FloatingButton
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

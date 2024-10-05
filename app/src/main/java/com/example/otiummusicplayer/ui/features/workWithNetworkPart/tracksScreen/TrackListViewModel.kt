@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class TrackListViewModel @Inject constructor(
@@ -38,12 +39,15 @@ class TrackListViewModel @Inject constructor(
     private fun handleResult(result: TrackListResult) {
         when (result) {
             TrackListResult.Loading -> state.tryEmit(state.value.copy(isLoading = true))
-            is TrackListResult.Error -> state.tryEmit(
-                state.value.copy(
-                    isLoading = false,
-                    error = "Error of loading: ${result.throwable.message}"
+            is TrackListResult.Error -> {
+                state.tryEmit(
+                    state.value.copy(
+                        isLoading = false,
+                        error = "Error of loading: ${result.throwable.message}"
+                    )
                 )
-            )
+                Log.d("AAA", "TrackListResult.Error = ${result.throwable.message}")
+            }
             is TrackListResult.Success -> state.tryEmit(
                 state.value.copy(
                     isLoading = false,

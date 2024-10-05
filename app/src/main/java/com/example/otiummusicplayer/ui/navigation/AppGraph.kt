@@ -8,12 +8,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.otiummusicplayer.ui.features.playerControlScreen.PlayTrackDestination
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.allTracks.MobileStorageTracksScreenDestination
-import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.folders.FoldersScreenDestination
+import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.folders.folderTracks.FoldersTracksScreenDestination
+import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.folders.main.FoldersScreenDestination
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.CollectionListDestination
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.screens.NetworkSearchDestination
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.tracksScreen.TrackListDestination
 
 private const val TRACK_ID = "id"
+private const val FOLDER_ID = "folderId"
 private const val TRACK_ITEM_ID = "itemId"
 private const val TRACKS_LIST = "tracks"
 
@@ -27,6 +29,14 @@ fun AppGraph(
         }
         composable(Route.FoldersScreen.route) {
             FoldersScreenDestination(navHostController)
+        }
+        composable(
+            Route.FoldersTracksScreen.route,
+            arguments = listOf(navArgument(FOLDER_ID) { type = NavType.IntType })
+        ) { backStack ->
+            backStack.arguments?.getInt(FOLDER_ID)?.let { folderId ->
+                FoldersTracksScreenDestination(folderId, navHostController)
+            }
         }
         composable(Route.MobileStorageTracksScreen.route) {
             MobileStorageTracksScreenDestination(navHostController)

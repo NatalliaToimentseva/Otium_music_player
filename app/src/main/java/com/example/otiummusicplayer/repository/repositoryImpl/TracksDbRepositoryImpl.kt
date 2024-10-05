@@ -17,4 +17,10 @@ class TracksDbRepositoryImpl @Inject constructor(
     override fun loadFavoriteListPage(): PagingSource<Int, TracksDbEntity> = dao.getTracksPage()
 
     override suspend fun checkIfInFavorite(id: String): TracksDbEntity? = dao.getTrackById(id)
+
+    override suspend fun addToPlaylist(tracks: List<TracksDbEntity>) =
+        dao.addTracksToPlaylist(tracks)
+
+    override suspend fun deleteFromPlaylist(tracks: List<TracksDbEntity>) =
+        dao.deleteTrackFromPlayList(tracks)
 }

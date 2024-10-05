@@ -8,6 +8,13 @@ sealed class Route(val route: String) {
 
     data object MobileStorageTracksScreen : Route("MobileStorageTracksScreen")
 
+    data object FoldersTracksScreen : Route("FoldersTracksScreen/{folderId}") {
+
+        fun selectRoute(folderId: Int): String {
+            return "FoldersTracksScreen/$folderId"
+        }
+    }
+
     data object NetworkSearch : Route("NetworkSearchScreen")
 
     data object TrackList : Route("TrackList/{id}") {

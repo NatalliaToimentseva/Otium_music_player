@@ -2,6 +2,7 @@ package com.example.otiummusicplayer.models.mobilePart
 
 import android.net.Uri
 import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.utils.formatTimeMls
 
 data class MobileStorageTrackModel(
     val id: Long,
@@ -25,14 +26,16 @@ fun MobileStorageTrackModel.toTrackModel(): TrackModel {
         name = trTitle,
         image = null,
         audio = uri.toString(),
-        duration = duration,
+//        uri = uri,
+        duration = formatTimeMls(duration),
         albumName = album,
         albumId = null,
         artistName = artist,
         audioDownload = null,
         isDownloadAllowed = null,
         shareUrl = null,
-        isFavorite = null
+        isFavorite = null,
+        playlistId = null
     )
 }
 

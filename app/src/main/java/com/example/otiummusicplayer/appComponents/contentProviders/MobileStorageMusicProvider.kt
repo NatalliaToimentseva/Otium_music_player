@@ -9,5 +9,5 @@ interface MobileStorageMusicProvider {
 
     suspend fun getFolders(): Set<TracksFolders>
 
-    suspend fun getTracksByFolderId(folderId: Int): List<MobileStorageTrackModel>
+    suspend fun getTracksByFolderId(folderId: Int, limit: Int, offset: Int): List<MobileStorageTrackModel>
 }

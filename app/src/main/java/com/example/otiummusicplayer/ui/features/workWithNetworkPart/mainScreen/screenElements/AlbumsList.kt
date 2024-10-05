@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,7 +34,7 @@ import com.example.otiummusicplayer.utils.toast
 fun AlbumsList(data: LazyPagingItems<AlbumModel>?, onClick: (id: String) -> Unit) {
     Box(
         modifier = Modifier
-            .background(Graphite)
+            .background(MaterialTheme.colorScheme.background)
             .padding(vertical = 10.dp)
     ) {
         data?.let { items ->
@@ -64,16 +65,17 @@ fun AlbumsList(data: LazyPagingItems<AlbumModel>?, onClick: (id: String) -> Unit
                                 Text(
                                     text = items[index]?.name
                                         ?: stringResource(id = R.string.no_title),
-                                    fontSize = 20.sp,
-                                    color = White,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier
                                         .width(110.dp)
+                                        .padding(top = 5.dp)
                                 )
                                 Text(
                                     text = items[index]?.artistName
                                         ?: stringResource(id = R.string.no_title),
-                                    fontSize = 18.sp,
-                                    color = White,
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier
                                         .width(110.dp)
                                 )

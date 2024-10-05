@@ -9,14 +9,14 @@ import androidx.compose.ui.unit.sp
 import com.example.otiummusicplayer.R
 
 val aubreyFont = FontFamily(
-    Font(R.font.aubrey_regular)
+    Font(R.font.lora_regular)
 )
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = aubreyFont,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp,
+        fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     )

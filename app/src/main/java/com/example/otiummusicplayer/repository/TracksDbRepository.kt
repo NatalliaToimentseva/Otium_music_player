@@ -12,4 +12,8 @@ interface TracksDbRepository {
     fun loadFavoriteListPage(): PagingSource<Int, TracksDbEntity>
 
     suspend fun checkIfInFavorite(id: String): TracksDbEntity?
+
+    suspend fun addToPlaylist(tracks: List<TracksDbEntity>)
+
+    suspend fun deleteFromPlaylist(tracks: List<TracksDbEntity>)
 }

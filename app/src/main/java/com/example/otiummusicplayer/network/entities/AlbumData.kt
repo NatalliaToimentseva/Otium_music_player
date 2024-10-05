@@ -1,20 +1,29 @@
 package com.example.otiummusicplayer.network.entities
 
 import com.example.otiummusicplayer.models.networkPart.AlbumModel
+import com.google.gson.annotations.SerializedName
 
 data class AlbumData(
+    @SerializedName("id")
     val id: String,
+    @SerializedName("image")
     val image: String,
+    @SerializedName("name")
     val name: String,
-    val artist_id: String,
-    val artist_name: String,
-    val releasedate: String,
-    val shareurl: String,
-    val shorturl: String,
+    @SerializedName("artist_id")
+    val artistId: String,
+    @SerializedName("artist_name")
+    val artistName: String,
+    @SerializedName("releasedate")
+    val releaseDate: String,
+    @SerializedName("shareurl")
+    val shareUrl: String,
+    @SerializedName("zip")
     val zip: String,
-    val zip_allowed: Boolean
+    @SerializedName("zip_allowed")
+    val zipAllowed: Boolean
 )
 
 fun AlbumData.toAlbumModel() = AlbumModel(
-    id, image, name, artist_id, artist_name, shareurl, zip, zip_allowed
+    id, image, name, artistId, artistName, shareUrl, zip, zipAllowed
 )

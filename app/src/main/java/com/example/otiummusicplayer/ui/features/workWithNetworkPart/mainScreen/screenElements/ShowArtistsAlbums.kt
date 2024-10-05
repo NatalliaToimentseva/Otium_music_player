@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,10 +30,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.models.networkPart.AlbumModel
-import com.example.otiummusicplayer.ui.theme.Graphite
-import com.example.otiummusicplayer.ui.theme.White
-import com.example.otiummusicplayer.ui.theme.WhiteTr
-
 private const val PORTRAIT_CONF_ITEM_NUMBER = 2
 private const val LANDSCAPE_CONF_ITEM_NUMBER = 4
 
@@ -53,13 +50,13 @@ fun ShowArtistsAlbums(
             onClose()
         },
         modifier = Modifier.fillMaxWidth(),
-        containerColor = WhiteTr
+        containerColor = MaterialTheme.colorScheme.onSecondaryContainer
     ) {
         Scaffold(
             content = { paddingValues ->
                 Box(
                     modifier = Modifier
-                        .background(Graphite)
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(paddingValues)
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
@@ -91,15 +88,15 @@ fun ShowArtistsAlbums(
                                         modifier = Modifier
                                             .height(160.dp)
                                             .width(160.dp)
-                                            .padding(10.dp)
+                                            .padding(horizontal = 10.dp, vertical = 5.dp)
                                     )
                                     Text(
                                         text = albums[ind].name,
-                                        fontSize = 18.sp,
-                                        color = White,
+                                        fontSize = 16.sp,
+                                        color = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier
                                             .width(150.dp)
-                                            .padding(10.dp)
+                                            .padding(horizontal = 10.dp, vertical = 5.dp)
                                     )
                                 }
                             }

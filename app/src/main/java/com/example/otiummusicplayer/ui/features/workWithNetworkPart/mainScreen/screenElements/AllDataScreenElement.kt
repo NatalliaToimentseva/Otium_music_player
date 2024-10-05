@@ -1,10 +1,14 @@
 package com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.screenElements
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,7 +22,6 @@ import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgre
 import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.domain.NetworkSearchAction
 import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.domain.NetworkSearchState
-import com.example.otiummusicplayer.ui.theme.White
 import com.example.otiummusicplayer.utils.toast
 
 @Composable
@@ -31,10 +34,12 @@ fun AllDataScreenElement(
     val albums = state.albums?.collectAsLazyPagingItems()
     val artists = state.artists?.collectAsLazyPagingItems()
 
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .padding(top = 15.dp)){
-        SearchFieldScreenElement(state,processAction)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 15.dp)
+    ) {
+        SearchFieldScreenElement(state, processAction)
         if (state.searchResult == null) {
             Column(
                 modifier = Modifier
@@ -44,7 +49,7 @@ fun AllDataScreenElement(
                 Text(
                     text = stringResource(id = R.string.albums),
                     fontSize = 24.sp,
-                    color = White,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .padding(10.dp)
                 )
@@ -52,7 +57,7 @@ fun AllDataScreenElement(
                 Text(
                     text = stringResource(id = R.string.artists),
                     fontSize = 24.sp,
-                    color = White,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .padding(10.dp)
                 )
@@ -74,7 +79,21 @@ fun AllDataScreenElement(
                 }
             }
         } else {
-            TracksListElement(state.searchResult, goToPlayer)
+            if (state.searchResult.collectAsLazyPagingItems().itemSnapshotList.isEmpty()) {
+                Box(modifier = Modifier.padding(15.dp)) {
+                    Text(text = "Data not found", color = MaterialTheme.colorScheme.primary)
+                }
+            } else {
+                TracksListElement(
+                    modifier = Modifier
+                        .height(100.dp)
+                        .width(100.dp)
+                        .padding(bottom = 10.dp),
+                    tracksList = state.searchResult,
+                    goToPlayer = goToPlayer,
+                    null, null
+                )
+            }
         }
     }
 }

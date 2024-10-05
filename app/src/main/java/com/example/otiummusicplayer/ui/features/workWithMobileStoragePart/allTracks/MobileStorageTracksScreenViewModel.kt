@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.example.otiummusicplayer.models.networkPart.TrackModel
 import com.example.otiummusicplayer.repository.dataSource.MobileStorageTracksPagingSource
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.allTracks.domain.MobileStorageTracksAction
 import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.allTracks.domain.MobileStorageTracksState
@@ -30,6 +31,8 @@ class MobileStorageTracksScreenViewModel @Inject constructor(
         when (action) {
             MobileStorageTracksAction.LoadStorageTracks -> loadMobileStorageTracks()
             is MobileStorageTracksAction.IsShowPermissionDialog -> showPermissionDialog(action.isShow)
+            MobileStorageTracksAction.AddTrackToPlayList -> addTrackToPlayList()
+            is MobileStorageTracksAction.AddItemToSelected -> addItemToSelected(action.item)
         }
     }
 
@@ -46,6 +49,31 @@ class MobileStorageTracksScreenViewModel @Inject constructor(
                 isLoading = false
             )
         )
+    }
+
+    private fun addTrackToPlayList() {
+
+    }
+
+    private fun addItemToSelected(item: TrackModel) {
+        val indexInList = state.value.selectedItems.indexOfFirst { it.id == item.id}
+        if (indexInList == -1) {
+            state.tryEmit(
+                state.value.copy(
+                    selectedItems = state.value.selectedItems.plus(
+                        item
+                    )
+                )
+            )
+        } else {
+            state.tryEmit(
+                state.value.copy(
+                    selectedItems = state.value.selectedItems.minus(
+                        item
+                    )
+                )
+            )
+        }
     }
 
     private fun showPermissionDialog(isShow: Boolean) {
