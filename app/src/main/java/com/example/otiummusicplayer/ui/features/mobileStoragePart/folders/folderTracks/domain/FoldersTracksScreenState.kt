@@ -5,7 +5,6 @@ import com.example.otiummusicplayer.models.TrackModel
 import kotlinx.coroutines.flow.Flow
 
 data class FoldersTracksScreenState(
-    val showPermissionDialog: Boolean = false,
     val isLoading: Boolean = false,
     val tracksFolderList: Flow<PagingData<TrackModel>>? = null,
     val selectedTracks: List<TrackModel> = arrayListOf(),

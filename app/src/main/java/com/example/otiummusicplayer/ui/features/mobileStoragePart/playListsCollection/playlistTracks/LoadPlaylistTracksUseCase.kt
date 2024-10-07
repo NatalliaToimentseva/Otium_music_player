@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.ui.features.networkPart.mainScreen
+package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.playlistTracks
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -15,17 +15,17 @@ import javax.inject.Inject
 private const val INIT_PAGE_SIZE = 10
 private const val INIT_LOAD_SIZE = 20
 
-class LoadFavoriteDataUseCase @Inject constructor(
-    private val repository: TracksDbRepository
+class LoadPlaylistTracksUseCase @Inject constructor(
+    private val tracksDbRepository: TracksDbRepository
 ) {
 
-    fun loadFavoriteListPage(): Flow<PagingData<TrackModel>> = Pager(
+    fun loadTracks(playlistId: Long): Flow<PagingData<TrackModel>> = Pager(
         PagingConfig(
             pageSize = INIT_PAGE_SIZE,
             prefetchDistance = INIT_LOAD_SIZE
         )
     ) {
-        repository.loadFavoriteListPage(-1)
+        tracksDbRepository.loadPlaylistTracks(playlistId)
     }.flow
         .map { value: PagingData<TracksDbEntity> ->
             value.map { tracksDbEntity: TracksDbEntity ->

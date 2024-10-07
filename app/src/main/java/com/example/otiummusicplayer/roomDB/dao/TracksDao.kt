@@ -2,7 +2,6 @@ package com.example.otiummusicplayer.roomDB.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -17,8 +16,8 @@ interface TracksDao {
     @Query("DELETE FROM Tracks WHERE id = :id")
     suspend fun deleteTrack(id: String)
 
-    @Query("SELECT * FROM Tracks WHERE playlist_id = null")
-    fun getTracksPage(): PagingSource<Int, TracksDbEntity>
+    @Query("SELECT * FROM Tracks WHERE playlist_id = :playlistId")
+    fun getTracksPage(playlistId: Long): PagingSource<Int, TracksDbEntity>
 
     @Query("SELECT * FROM tracks WHERE id = :id")
     suspend fun getTrackById(id: String): TracksDbEntity?
@@ -26,6 +25,6 @@ interface TracksDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addTracksToPlaylist(tracks: List<TracksDbEntity>)
 
-    @Delete(entity = TracksDbEntity::class)
-    suspend fun deleteTrackFromPlayList(tracks: List<TracksDbEntity>)
+    @Query("DELETE FROM tracks WHERE id IN (:tracksId)")
+    suspend fun deleteTrackFromPlayList(tracksId: List<String>)
 }

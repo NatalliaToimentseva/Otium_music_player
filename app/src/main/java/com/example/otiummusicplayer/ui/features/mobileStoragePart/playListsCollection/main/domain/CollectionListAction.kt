@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.domain
+package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain
 
 import com.example.otiummusicplayer.models.mobilePart.PlayerPlayListModel
 
@@ -9,6 +9,8 @@ sealed class CollectionListAction {
     data object GetAllPlaylists : CollectionListAction()
 
     data class SelectPlaylist(val item: PlayerPlayListModel) : CollectionListAction()
+
+    data object UnselectAll : CollectionListAction()
 
     data object DeletePlaylist : CollectionListAction()
 

@@ -30,7 +30,6 @@ class MobileStorageTracksScreenViewModel @Inject constructor(
     fun processAction(action: MobileStorageTracksAction) {
         when (action) {
             is MobileStorageTracksAction.LoadStorageTracks -> loadMobileStorageTracks()
-            is MobileStorageTracksAction.IsShowPermissionDialog -> showPermissionDialog(action.isShow)
             is MobileStorageTracksAction.AddTrackToSelected -> addTracksToSelected(action.item)
             is MobileStorageTracksAction.UnselectAllTracks -> unselectAllTracks()
             is MobileStorageTracksAction.ShowPlayListDialog -> showPlayListDialog()
@@ -51,10 +50,6 @@ class MobileStorageTracksScreenViewModel @Inject constructor(
                 isLoading = false
             )
         )
-    }
-
-    private fun showPermissionDialog(isShow: Boolean) {
-        state.tryEmit(state.value.copy(showPermissionDialog = isShow))
     }
 
     private fun addTracksToSelected(item: TrackModel) {

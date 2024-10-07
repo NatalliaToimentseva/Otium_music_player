@@ -1,10 +1,10 @@
-package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection
+package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main
 
 import android.database.sqlite.SQLiteConstraintException
 import com.example.otiummusicplayer.models.mobilePart.PlayerPlayListModel
 import com.example.otiummusicplayer.models.mobilePart.toPlaylistsEntity
 import com.example.otiummusicplayer.repository.PlaylistDbRepository
-import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.domain.PlaylistErrors
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain.PlaylistErrors
 import javax.inject.Inject
 
 class AddPlayListUseCase @Inject constructor(

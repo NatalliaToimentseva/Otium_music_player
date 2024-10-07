@@ -50,8 +50,12 @@ import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.ui.theme.TealTr
 import com.example.otiummusicplayer.utils.toast
 
+const val MOBILE_TRACK = "mobile track"
+const val NETWORK_TRACK = "network track"
+
 @Composable
 fun PlayTrackDestination(
+    whereFrom: String,
     itemId: String,
     tracks: String,
     navHostController: NavHostController,
@@ -59,6 +63,7 @@ fun PlayTrackDestination(
 ) {
     val state by viewModel.state.collectAsState()
     PlayTrackScreen(
+        whereFrom = whereFrom,
         tracks = tracks,
         itemId = itemId,
         state = state,
@@ -71,6 +76,7 @@ fun PlayTrackDestination(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayTrackScreen(
+    whereFrom: String,
     tracks: String,
     itemId: String,
     state: PlayerTrackState,
@@ -100,44 +106,46 @@ fun PlayTrackScreen(
                                 modifier = Modifier.padding(start = 10.dp, top = 10.dp)
                             )
                         }
-                        state.currentTrack?.isDownloadAllowed?.let { allowed ->
-                            if (allowed) {
-                                Button(
-                                    onClick = {
-                                        processAction(PlayerTrackAction.DownloadTrack)
-                                        context.toast("Downloads was started, please wait...")
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background),
-                                    modifier = Modifier
-                                        .align(Alignment.CenterEnd)
-                                        .padding(end = 45.dp, top = 15.dp)
-                                ) {
-                                    Image(
-                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_download),
-                                        contentDescription = stringResource(id = R.string.btn_download),
-                                    )
+                        if (whereFrom == NETWORK_TRACK) {
+                            state.currentTrack?.isDownloadAllowed?.let { allowed ->
+                                if (allowed) {
+                                    Button(
+                                        onClick = {
+                                            processAction(PlayerTrackAction.DownloadTrack)
+                                            context.toast("Downloads was started, please wait...")
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background),
+                                        modifier = Modifier
+                                            .align(Alignment.CenterEnd)
+                                            .padding(end = 45.dp, top = 15.dp)
+                                    ) {
+                                        Image(
+                                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_download),
+                                            contentDescription = stringResource(id = R.string.btn_download),
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        IconButton(
-                            onClick = {
-                                processAction(PlayerTrackAction.ChooseIfFavorite)
-                            },
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .padding(end = 15.dp, top = 5.dp)
-                        ) {
-                            state.currentTrack?.let { track ->
-                                track.isFavorite?.let { favorite ->
-                                    Image(
-                                        imageVector = if (favorite) {
-                                            ImageVector.vectorResource(id = R.drawable.like)
-                                        } else {
-                                            ImageVector.vectorResource(id = R.drawable.not_like)
-                                        },
-                                        contentDescription = stringResource(id = R.string.btn_back),
-                                        modifier = Modifier.padding(start = 10.dp, top = 10.dp)
-                                    )
+                            IconButton(
+                                onClick = {
+                                    processAction(PlayerTrackAction.ChooseIfFavorite)
+                                },
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(end = 15.dp, top = 5.dp)
+                            ) {
+                                state.currentTrack?.let { track ->
+                                    track.isFavorite?.let { favorite ->
+                                        Image(
+                                            imageVector = if (favorite) {
+                                                ImageVector.vectorResource(id = R.drawable.like)
+                                            } else {
+                                                ImageVector.vectorResource(id = R.drawable.not_like)
+                                            },
+                                            contentDescription = stringResource(id = R.string.btn_back),
+                                            modifier = Modifier.padding(start = 10.dp, top = 10.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -237,6 +245,7 @@ fun PlayTrackScreen(
 fun PlayTrackScreenPreview() {
     OtiumMusicPlayerTheme {
         PlayTrackScreen(
+            whereFrom = NETWORK_TRACK,
             tracks = "",
             itemId = "",
             state = PlayerTrackState(
@@ -245,7 +254,7 @@ fun PlayTrackScreenPreview() {
                         "",
                         name = "Карев А.В.(VIGOR) - Время героев",
                         image = "https://cs13.pikabu.ru/post_img/big/2023/03/03/6/1677836243167140809.png",
-                        "", "01:00", "", "", "", "", false, "", false, null
+                        "", "01:00", "", "", "", "", false, "", false, -1
                     )
                 )
             ),

@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.folderTracks
+package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.playlistTracks
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,24 +33,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
-import com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.folderTracks.domain.FoldersTracksScreenAction
-import com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.folderTracks.domain.FoldersTracksScreenState
-import com.example.otiummusicplayer.ui.features.mobileStoragePart.playlistChoiceAlertDialog.PlaylistChoiceAlertDialogDestination
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.playlistTracks.domain.PlaylistTracksScreenAction
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.playlistTracks.domain.PlaylistTracksScreenState
 import com.example.otiummusicplayer.ui.features.playerControlScreen.MOBILE_TRACK
 import com.example.otiummusicplayer.ui.navigation.Route
 
 @Composable
-fun FoldersTracksScreenDestination(
-    folderId: Int,
+fun PlaylistTracksScreenDestination(
+    playlistId: Long,
     navHostController: NavHostController,
-    viewModel: FoldersTracksScreenViewModel = hiltViewModel()
+    viewModel: PlaylistTracksScreenViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-    FoldersTracksScreen(
-        folderId = folderId,
+    PlaylistTracksScreen(
+        playlistId = playlistId,
         state = state,
         processAction = viewModel::processAction,
-        { itemID: String, tracks: String ->
+        goToPlayer = { itemID: String, tracks: String ->
             navHostController.navigate(
                 Route.PlayTrackScreen.selectRoute(
                     whereFrom = MOBILE_TRACK,
@@ -58,23 +57,26 @@ fun FoldersTracksScreenDestination(
                     tracks = tracks
                 )
             )
-        }, {
+        },
+        goBack = {
             navHostController.popBackStack()
-        })
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FoldersTracksScreen(
-    folderId: Int,
-    state: FoldersTracksScreenState,
-    processAction: (action: FoldersTracksScreenAction) -> Unit,
+fun PlaylistTracksScreen(
+    playlistId: Long,
+    state: PlaylistTracksScreenState,
+    processAction: (action: PlaylistTracksScreenAction) -> Unit,
     goToPlayer: (itemID: String, tracks: String) -> Unit,
     goBack: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
-        processAction(FoldersTracksScreenAction.LoadFolderTracks(folderId))
+        processAction(PlaylistTracksScreenAction.LoadPlaylistTracks(playlistId))
     }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -89,8 +91,8 @@ fun FoldersTracksScreen(
                     )
                     {
                         IconButton(onClick = {
-                            if (state.selectedTracks.isNotEmpty()) {
-                                processAction(FoldersTracksScreenAction.UnselectAllTracks)
+                            if (state.playlistSelectedTracks.isNotEmpty()) {
+                                processAction(PlaylistTracksScreenAction.UnselectAllTracks)
                             } else {
                                 goBack.invoke()
                             }
@@ -103,19 +105,14 @@ fun FoldersTracksScreen(
                                     .padding(top = 4.dp, start = 10.dp)
                             )
                         }
-                        if (state.selectedTracks.isNotEmpty()) {
+                        if (state.playlistSelectedTracks.isNotEmpty()) {
                             IconButton(onClick = {
-                                processAction(FoldersTracksScreenAction.ShowPlayListDialog)
+                                processAction(PlaylistTracksScreenAction.DeleteTracksFromPlaylist)
                             }) {
                                 Image(
-                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_add_playlist),
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
                                     contentDescription = null,
-                                    modifier = Modifier
-                                        .size(35.dp)
-                                        .padding(
-                                            top = 4.dp,
-                                            end = 10.dp
-                                        )
+                                    modifier = Modifier.size(25.dp)
                                 )
                             }
                         }
@@ -139,7 +136,7 @@ fun FoldersTracksScreen(
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 20.dp)
         ) {
-            state.tracksFolderList?.let {
+            state.playlistTracks?.let {
                 TracksListElement(
                     modifier = Modifier
                         .height(50.dp)
@@ -147,17 +144,10 @@ fun FoldersTracksScreen(
                         .padding(bottom = 10.dp),
                     tracksList = it,
                     goToPlayer = goToPlayer,
-                    onClick = { selectedItem ->
-                        processAction(FoldersTracksScreenAction.AddTrackToSelected(selectedItem))
+                    onClick = { selectedTrack ->
+                        processAction(PlaylistTracksScreenAction.SelectTracks(selectedTrack))
                     },
-                    selectedItem = state.selectedTracks
-                )
-            }
-            if (state.isShowPlaylistsDialog) {
-                PlaylistChoiceAlertDialogDestination(
-                    selectedTracks = state.selectedTracks,
-                    { processAction(FoldersTracksScreenAction.ClosePlayListDialog) },
-                    { processAction(FoldersTracksScreenAction.UnselectAllTracks) }
+                    selectedItem = state.playlistSelectedTracks
                 )
             }
         }

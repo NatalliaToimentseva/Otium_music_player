@@ -4,8 +4,6 @@ import com.example.otiummusicplayer.models.TrackModel
 
 sealed class MobileStorageTracksAction {
 
-    data class IsShowPermissionDialog(val isShow: Boolean) : MobileStorageTracksAction()
-
     data object LoadStorageTracks : MobileStorageTracksAction()
 
     data class AddTrackToSelected(val item: TrackModel) : MobileStorageTracksAction()

@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection
+package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main
 
 import android.database.sqlite.SQLiteConstraintException
 import com.example.otiummusicplayer.repository.PlaylistDbRepository

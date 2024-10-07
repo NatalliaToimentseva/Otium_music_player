@@ -20,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -36,6 +35,7 @@ import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksList
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.allTracks.domain.MobileStorageTracksAction
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.allTracks.domain.MobileStorageTracksState
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playlistChoiceAlertDialog.PlaylistChoiceAlertDialogDestination
+import com.example.otiummusicplayer.ui.features.playerControlScreen.MOBILE_TRACK
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -52,6 +52,7 @@ fun MobileStorageTracksScreenDestination(
         goToPlayer = { itemID: String, tracks: String ->
             navHostController.navigate(
                 Route.PlayTrackScreen.selectRoute(
+                    whereFrom = MOBILE_TRACK,
                     itemId = itemID,
                     tracks = tracks
                 )
@@ -81,11 +82,6 @@ fun MobileStorageTracksScreen(
             )
         }
     )
-    LaunchedEffect(Unit) {
-        if (!permissionsState.allPermissionsGranted) {
-            processAction(MobileStorageTracksAction.IsShowPermissionDialog(true))
-        }
-    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -139,7 +135,8 @@ fun MobileStorageTracksScreen(
         },
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(horizontal = 10.dp),
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Box(

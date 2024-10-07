@@ -4,6 +4,13 @@ sealed class Route(val route: String) {
 
     data object PlaylistsScreen : Route("PlaylistsScreen")
 
+    data object PlaylistTracksScreen : Route("PlaylistTracksScreen/{playlistId}") {
+
+        fun selectRoute(playlistId: Long): String {
+            return "PlaylistTracksScreen/$playlistId"
+        }
+    }
+
     data object FoldersScreen : Route("FoldersScreen")
 
     data object MobileStorageTracksScreen : Route("MobileStorageTracksScreen")
@@ -24,10 +31,10 @@ sealed class Route(val route: String) {
         }
     }
 
-    data object PlayTrackScreen : Route("PlayTrackScreen?itemId={itemId}&tracks={tracks}") {
+    data object PlayTrackScreen : Route("PlayTrackScreen?whereFrom={whereFrom}&itemId={itemId}&tracks={tracks}") {
 
-        fun selectRoute(itemId: String, tracks: String): String {
-            return "PlayTrackScreen?itemId=$itemId&tracks=$tracks"
+        fun selectRoute(whereFrom: String, itemId: String, tracks: String): String {
+            return "PlayTrackScreen?whereFrom=$whereFrom&itemId=$itemId&tracks=$tracks"
         }
     }
 }

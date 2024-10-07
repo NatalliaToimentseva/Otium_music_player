@@ -29,8 +29,8 @@ class MobileStorageMusicProviderImpl @Inject constructor(
     override suspend fun getAllStorageTracks(
         limit: Int,
         offset: Int
-    ): List<MobileStorageTrackModel> {
-        val listOfTracks = mutableListOf<MobileStorageTrackModel>()
+    ): Set<MobileStorageTrackModel> {
+        val listOfTracks = mutableSetOf<MobileStorageTrackModel>()
 
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} = ?"
         val selectionArguments = arrayOf("1")

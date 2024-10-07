@@ -19,10 +19,10 @@ data class TrackModel(
     val isDownloadAllowed: Boolean?,
     val shareUrl: String?,
     val isFavorite: Boolean?,
-    val playlistId: Long?
+    val playlistId: Long
 ) : Parcelable
 
-fun TrackModel.toTrackDbEntity(playlistId: Long?): TracksDbEntity {
+fun TrackModel.toTrackDbEntity(playlistId: Long): TracksDbEntity {
     return TracksDbEntity(
         dbId = 0,
         id = id,
@@ -41,6 +41,6 @@ fun TrackModel.toTrackDbEntity(playlistId: Long?): TracksDbEntity {
     )
 }
 
-fun List<TrackModel>.toListTrackDbEntity(playlistId: Long?): List<TracksDbEntity> {
+fun List<TrackModel>.toListTrackDbEntity(playlistId: Long): List<TracksDbEntity> {
     return this.map { item -> item.toTrackDbEntity(playlistId) }
 }

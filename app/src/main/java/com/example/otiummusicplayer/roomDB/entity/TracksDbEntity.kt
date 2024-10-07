@@ -42,7 +42,7 @@ data class TracksDbEntity(
     @ColumnInfo("favorite")
     val isFavorite: Boolean?,
     @ColumnInfo("playlist_id")
-    val playlistId: Long?
+    val playlistId: Long
 )
 
 fun TracksDbEntity.toTrackModel(): TrackModel {

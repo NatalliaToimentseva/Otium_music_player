@@ -28,7 +28,6 @@ class FoldersTracksScreenViewModel @Inject constructor(
     fun processAction(action: FoldersTracksScreenAction) {
         when (action) {
             is FoldersTracksScreenAction.LoadFolderTracks -> loadFolderTracks(action.folderId)
-            is FoldersTracksScreenAction.IsShowPermissionDialog -> showPermissionDialog(action.isShow)
             is FoldersTracksScreenAction.AddTrackToSelected -> addTracksToSelected(action.item)
             is FoldersTracksScreenAction.UnselectAllTracks -> unselectAllTracks()
             is FoldersTracksScreenAction.ShowPlayListDialog -> showPlayListDialog()
@@ -52,10 +51,6 @@ class FoldersTracksScreenViewModel @Inject constructor(
                 )
             )
         }
-    }
-
-    private fun showPermissionDialog(isShow: Boolean) {
-        state.tryEmit(state.value.copy(showPermissionDialog = isShow))
     }
 
     private fun addTracksToSelected(item: TrackModel) {

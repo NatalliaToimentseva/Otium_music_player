@@ -1,13 +1,13 @@
-package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection
+package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.otiummusicplayer.models.mobilePart.PlayerPlayListModel
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.generalUseCases.GetPlaylistUseCase
-import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.domain.CollectionListAction
-import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.domain.CollectionListState
-import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.domain.PlaylistErrors
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain.CollectionListAction
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain.CollectionListState
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain.PlaylistErrors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +32,7 @@ class CollectionListViewModel @Inject constructor(
             is CollectionListAction.IsShowPermissionDialog -> showPermissionDialog(action.isShow)
             is CollectionListAction.GetAllPlaylists -> getPlayLists()
             is CollectionListAction.SelectPlaylist -> selectPlaylist(action.item)
+            is CollectionListAction.UnselectAll -> unselectAll()
             is CollectionListAction.DeletePlaylist -> deletePlayList()
             is CollectionListAction.ShowDialog -> showDialog()
             is CollectionListAction.SetNewPlaylistTitleFromDialog -> rememberTitleForNewPlaylist(
@@ -41,6 +42,7 @@ class CollectionListViewModel @Inject constructor(
             is CollectionListAction.AddPlaylist -> createPlayList(action.title)
             is CollectionListAction.HideDialog -> hideDialog()
             is CollectionListAction.ClearError -> clearError()
+
         }
     }
 
@@ -78,11 +80,17 @@ class CollectionListViewModel @Inject constructor(
         }
     }
 
+    private fun unselectAll() {
+        state.tryEmit(state.value.copy(selectedItemsList = arrayListOf()))
+    }
+
     private fun deletePlayList() {
         viewModelScope.launch(Dispatchers.IO) {
-            val listId = state.value.selectedItemsList.map { item -> item.id }
-            deletePlaylistUseCase.deletePlayList(listId)
-            state.tryEmit(state.value.copy(selectedItemsList = arrayListOf()))
+            if (state.value.selectedItemsList.isNotEmpty()) {
+                val listId = state.value.selectedItemsList.map { item -> item.id }
+                deletePlaylistUseCase.deletePlayList(listId)
+                state.tryEmit(state.value.copy(selectedItemsList = arrayListOf()))
+            }
         }
     }
 

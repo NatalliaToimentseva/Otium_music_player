@@ -12,7 +12,7 @@ class AddToFavoriteUseCase @Inject constructor(
 
     suspend fun addTrackToFavorite(trackModel: TrackModel) {
         try {
-            repository.addToFavorite(trackModel.toTrackDbEntity(null))
+            repository.addToFavorite(trackModel.toTrackDbEntity(-1))
         } catch (e: SQLiteConstraintException) {
             e.stackTrace
         }

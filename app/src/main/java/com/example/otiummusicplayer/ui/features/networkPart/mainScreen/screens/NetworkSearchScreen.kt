@@ -37,6 +37,7 @@ import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.domain.Ne
 import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.screenElements.AllDataScreenElement
 import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
 import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
+import com.example.otiummusicplayer.ui.features.playerControlScreen.NETWORK_TRACK
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -56,6 +57,7 @@ fun NetworkSearchDestination(
         { itemID: String, tracks: String ->
             navHostController.navigate(
                 Route.PlayTrackScreen.selectRoute(
+                    whereFrom = NETWORK_TRACK,
                     itemId = itemID,
                     tracks = tracks
                 )
@@ -97,7 +99,7 @@ fun NetworkSearchScreen(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(horizontal = 10.dp),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             BottomNavigationScreenElement(

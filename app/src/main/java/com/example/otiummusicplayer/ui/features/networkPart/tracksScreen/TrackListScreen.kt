@@ -37,6 +37,7 @@ import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
 import com.example.otiummusicplayer.ui.features.networkPart.tracksScreen.domain.TrackLisState
 import com.example.otiummusicplayer.ui.features.networkPart.tracksScreen.domain.TrackListAction
+import com.example.otiummusicplayer.ui.features.playerControlScreen.NETWORK_TRACK
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.utils.toast
@@ -56,7 +57,7 @@ fun TrackListDestination(
         navHostController.popBackStack()
     }, { itemId ->
         navHostController.navigate(
-            Route.PlayTrackScreen.selectRoute(itemId = itemId, tracks = tracksList)
+            Route.PlayTrackScreen.selectRoute(whereFrom = NETWORK_TRACK, itemId = itemId, tracks = tracksList)
         )
     })
 }
@@ -142,7 +143,7 @@ fun TrackListPreview() {
                 tracks = arrayListOf(
                     TrackModel(
                         "", "Test", "", "", "01:00", "", "",
-                        "", "", false, "", false, null
+                        "", "", false, "", false, -1
                     )
                 )
             ),

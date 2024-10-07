@@ -167,11 +167,13 @@ class PlayerViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             state.value.currentTrack?.let { track ->
                 if (track.isFavorite == true) {
-                    state.tryEmit(state.value.copy(currentTrack = track.copy(isFavorite = false)))
-                    deleteFromFavoriteUseCase.deleteTrackFromFavorite(track)
+                    val notFavorite = track.copy(isFavorite = false)
+                    state.tryEmit(state.value.copy(currentTrack = notFavorite))
+                    deleteFromFavoriteUseCase.deleteTrackFromFavorite(notFavorite)
                 } else {
-                    state.tryEmit(state.value.copy(currentTrack = track.copy(isFavorite = true)))
-                    addToFavoriteUseCase.addTrackToFavorite(track)
+                    val favorite = track.copy(isFavorite = true)
+                    state.tryEmit(state.value.copy(currentTrack = favorite))
+                    addToFavoriteUseCase.addTrackToFavorite(favorite)
                 }
             }
         }

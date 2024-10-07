@@ -30,7 +30,7 @@ class MobileStorageTracksPagingSource @Inject constructor(
             val response = mobileStorageMusicProvider.getAllStorageTracks(
                 pageSize,
                 page * pageSize
-            )
+            ).toList()
             LoadResult.Page(
                 data = response.toListTrackModel(),
                 prevKey = if (page == BASE_STARTING_PAGE_INDEX) null else page - ONE_PAGE,

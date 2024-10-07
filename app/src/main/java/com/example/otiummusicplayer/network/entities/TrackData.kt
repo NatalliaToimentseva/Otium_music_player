@@ -43,5 +43,5 @@ fun TrackData.toTrackModel(): TrackModel = TrackModel(
     isDownloadAllowed = isDownloadAllowed,
     shareUrl = urlToShare,
     isFavorite = false,
-    playlistId = null
+    playlistId = -1
 )

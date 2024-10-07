@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.domain
+package com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain
 
 import androidx.paging.PagingData
 import com.example.otiummusicplayer.models.mobilePart.PlayerPlayListModel

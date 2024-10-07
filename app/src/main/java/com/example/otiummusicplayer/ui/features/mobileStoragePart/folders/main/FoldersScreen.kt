@@ -77,7 +77,7 @@ fun FoldersScreen(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
-            .padding(all = 10.dp),
+            .padding(horizontal = 10.dp),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             BottomNavigationScreenElement(

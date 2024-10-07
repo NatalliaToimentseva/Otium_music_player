@@ -35,7 +35,7 @@ fun MobileStorageTrackModel.toTrackModel(): TrackModel {
         isDownloadAllowed = null,
         shareUrl = null,
         isFavorite = null,
-        playlistId = null
+        playlistId = -1
     )
 }
 
