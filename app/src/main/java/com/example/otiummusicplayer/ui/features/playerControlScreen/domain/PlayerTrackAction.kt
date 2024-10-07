@@ -6,8 +6,6 @@ sealed class PlayerTrackAction {
 
     data class SetCurrentPosition(val position: Int) : PlayerTrackAction()
 
-    data object DownloadTrack : PlayerTrackAction()
-
     data object Play : PlayerTrackAction()
 
     data object Stop : PlayerTrackAction()
@@ -17,6 +15,8 @@ sealed class PlayerTrackAction {
     data object PlayNext : PlayerTrackAction()
 
     data object PlayPrevious : PlayerTrackAction()
+
+    data object DownloadTrack : PlayerTrackAction()
 
     data object ChooseIfFavorite : PlayerTrackAction()
 }

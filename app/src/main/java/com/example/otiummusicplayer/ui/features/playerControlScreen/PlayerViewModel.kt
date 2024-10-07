@@ -4,7 +4,7 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
 import com.example.otiummusicplayer.ui.features.playerControlScreen.playerElements.DownloadTrackUseCase

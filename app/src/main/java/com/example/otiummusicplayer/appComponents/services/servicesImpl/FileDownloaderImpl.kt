@@ -9,6 +9,8 @@ import com.example.otiummusicplayer.appComponents.services.FileDownloader
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+private const val MIME_TYPE = "audio/mpeg"
+
 class FileDownloaderImpl @Inject constructor(
     @ApplicationContext context: Context
 ) : FileDownloader {
@@ -18,7 +20,7 @@ class FileDownloaderImpl @Inject constructor(
     override fun downloadFile(url: String): Long {
         val fileTitle = URLUtil.guessFileName(url, null, null)
         val request = DownloadManager.Request(url.toUri())
-            .setMimeType("audio/mpeg")
+            .setMimeType(MIME_TYPE)
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION)
             .setTitle(fileTitle)
             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileTitle)

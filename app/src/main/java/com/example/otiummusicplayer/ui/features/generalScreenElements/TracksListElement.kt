@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -26,7 +27,10 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.otiummusicplayer.R
-import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.models.TrackModel
+import com.example.otiummusicplayer.ui.theme.FloatingButton
+import com.example.otiummusicplayer.ui.theme.HoverLight
+import com.example.otiummusicplayer.ui.theme.TealExtraLight
 import com.example.otiummusicplayer.ui.theme.TealTr
 import com.example.otiummusicplayer.utils.toast
 import com.google.gson.GsonBuilder
@@ -59,10 +63,25 @@ fun TracksListElement(
                             .padding(bottom = 2.dp)
                             .background(
                                 if (selectedItem?.contains(tracks[index]) == true) {
-                                    TealTr
-                                } else {
-                                    Color.Transparent
-                                }
+                                    Brush.horizontalGradient(
+                                        arrayListOf(
+                                            TealExtraLight,
+                                            TealTr,
+                                            FloatingButton,
+                                            HoverLight,
+                                            HoverLight,
+                                            HoverLight,
+                                            FloatingButton,
+                                            TealTr,
+                                            TealExtraLight
+                                        )
+                                    )
+                                } else Brush.horizontalGradient(
+                                    arrayListOf(
+                                        Color.Transparent,
+                                        Color.Transparent
+                                    )
+                                )
                             )
                             .combinedClickable(
                                 onClick = {

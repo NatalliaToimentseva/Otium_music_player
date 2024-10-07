@@ -1,7 +1,7 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen
 
 import android.database.sqlite.SQLiteConstraintException
-import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.repository.TracksDbRepository
 import javax.inject.Inject
 

@@ -1,6 +1,6 @@
 package com.example.otiummusicplayer.network.entities
 
-import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.models.TrackModel
 import com.google.gson.annotations.SerializedName
 
 data class Track(

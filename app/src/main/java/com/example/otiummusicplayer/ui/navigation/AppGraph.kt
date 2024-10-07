@@ -7,12 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.otiummusicplayer.ui.features.playerControlScreen.PlayTrackDestination
-import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.allTracks.MobileStorageTracksScreenDestination
-import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.folders.folderTracks.FoldersTracksScreenDestination
-import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.folders.main.FoldersScreenDestination
-import com.example.otiummusicplayer.ui.features.workWithMobileStoragePart.playListsCollection.CollectionListDestination
-import com.example.otiummusicplayer.ui.features.workWithNetworkPart.mainScreen.screens.NetworkSearchDestination
-import com.example.otiummusicplayer.ui.features.workWithNetworkPart.tracksScreen.TrackListDestination
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.allTracks.MobileStorageTracksScreenDestination
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.folderTracks.FoldersTracksScreenDestination
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.main.FoldersScreenDestination
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.CollectionListDestination
+import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.screens.NetworkSearchDestination
+import com.example.otiummusicplayer.ui.features.networkPart.tracksScreen.TrackListDestination
 
 private const val TRACK_ID = "id"
 private const val FOLDER_ID = "folderId"

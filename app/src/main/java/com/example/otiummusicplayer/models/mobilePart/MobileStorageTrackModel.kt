@@ -1,7 +1,7 @@
 package com.example.otiummusicplayer.models.mobilePart
 
 import android.net.Uri
-import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.utils.formatTimeMls
 
 data class MobileStorageTrackModel(

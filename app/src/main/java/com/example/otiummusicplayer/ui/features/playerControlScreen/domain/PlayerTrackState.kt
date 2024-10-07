@@ -1,7 +1,7 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen.domain
 
 import android.media.MediaPlayer
-import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.models.TrackModel
 
 data class PlayerTrackState(
     val mediaPlayer: MediaPlayer? = null,

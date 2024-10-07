@@ -1,7 +1,7 @@
 package com.example.otiummusicplayer.ui.features.generalScreenElements
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ShowProgress (modifier: Modifier?) {
-    Box (modifier = Modifier.fillMaxWidth()){
+    Box (modifier = Modifier.fillMaxSize()){
         CircularProgressIndicator(
             modifier = modifier?: Modifier
                 .width(50.dp)

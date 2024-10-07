@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.otiummusicplayer.models.networkPart.TrackModel
+import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.utils.formatTimeMls
 
 @Entity(
@@ -41,8 +41,8 @@ data class TracksDbEntity(
     val shareUrl: String?,
     @ColumnInfo("favorite")
     val isFavorite: Boolean?,
-    @ColumnInfo("playlistId")
-    val playlistId: Boolean?
+    @ColumnInfo("playlist_id")
+    val playlistId: Long?
 )
 
 fun TracksDbEntity.toTrackModel(): TrackModel {

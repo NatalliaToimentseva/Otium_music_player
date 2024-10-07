@@ -17,7 +17,7 @@ interface TracksDao {
     @Query("DELETE FROM Tracks WHERE id = :id")
     suspend fun deleteTrack(id: String)
 
-    @Query("SELECT * FROM Tracks")
+    @Query("SELECT * FROM Tracks WHERE playlist_id = null")
     fun getTracksPage(): PagingSource<Int, TracksDbEntity>
 
     @Query("SELECT * FROM tracks WHERE id = :id")

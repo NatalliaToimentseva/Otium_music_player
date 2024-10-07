@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 private val DarkColorScheme = darkColorScheme(
     primary = White,
     secondary = FloatingButton,
-    tertiary = Teal,
+    tertiary = Graphite,
     onPrimary = GraphiteTr,
     background = Graphite,
     onSurfaceVariant = GradientTr,
@@ -25,7 +25,7 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = Graphite,
     secondary = Hover,
-    tertiary = Teal,
+    tertiary = Graphite,
     onPrimary = LightTr,
     background = BackgroundWhite,
     onSurfaceVariant = GradientLightTr,
