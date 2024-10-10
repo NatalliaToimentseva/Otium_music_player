@@ -1,5 +1,7 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen
 
+import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +52,7 @@ import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.Playe
 import com.example.otiummusicplayer.ui.features.playerControlScreen.playerElements.AudioPlayerControls
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.ui.theme.TealTr
+import com.example.otiummusicplayer.utils.loadPicture
 import com.example.otiummusicplayer.utils.toast
 
 const val MOBILE_TRACK = "mobile track"
@@ -93,7 +98,7 @@ fun PlayTrackScreen(
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    Box (modifier = Modifier.fillMaxWidth()){
+                    Box(modifier = Modifier.fillMaxWidth()) {
                         IconButton(
                             onClick = {
                                 goBack.invoke()
@@ -173,7 +178,11 @@ fun PlayTrackScreen(
                     .height(430.dp)
             ) {
                 AsyncImage(
-                    model = state.currentTrack?.image,
+                    model = if (state.currentTrack?.image != null) {
+                        state.currentTrack.image
+                    } else {
+                        state.imageBitmap
+                    },
                     placeholder = painterResource(id = R.drawable.bg_sound),
                     error = painterResource(id = R.drawable.bg_sound),
                     contentDescription = stringResource(id = R.string.album_im),
@@ -234,7 +243,8 @@ fun PlayTrackScreen(
                     .padding(start = 20.dp, bottom = 10.dp)
             )
             AudioPlayerControls(state, processAction)
-            if (state.isLoading) { ShowProgress(modifier = null)
+            if (state.isLoading) {
+                ShowProgress(modifier = null)
             }
         }
     }
@@ -254,7 +264,7 @@ fun PlayTrackScreenPreview() {
                         "",
                         name = "Карев А.В.(VIGOR) - Время героев",
                         image = "https://cs13.pikabu.ru/post_img/big/2023/03/03/6/1677836243167140809.png",
-                        "", "01:00", "", "", "", "", false, "", false, -1
+                        "", "01:00", "", "", "", "", "", false, "", false, -1
                     )
                 )
             ),

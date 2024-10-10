@@ -23,6 +23,8 @@ data class TracksDbEntity(
     val trackName: String,
     @ColumnInfo("track_image")
     val trackImage: String?,
+    @ColumnInfo("track_path")
+    val trackPath: String?,
     @ColumnInfo("track_audio")
     val trackAudio: String,
     @ColumnInfo("duration")
@@ -51,7 +53,7 @@ fun TracksDbEntity.toTrackModel(): TrackModel {
         name = trackName,
         image = trackImage,
         audio = trackAudio,
-//        null,
+        path = trackPath,
         duration = formatTimeMls(duration),
         albumName = albumName,
         albumId = albumId,

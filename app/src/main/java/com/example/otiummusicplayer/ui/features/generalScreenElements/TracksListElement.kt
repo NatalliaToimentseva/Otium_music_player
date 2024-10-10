@@ -32,6 +32,7 @@ import com.example.otiummusicplayer.ui.theme.FloatingButton
 import com.example.otiummusicplayer.ui.theme.HoverLight
 import com.example.otiummusicplayer.ui.theme.TealExtraLight
 import com.example.otiummusicplayer.ui.theme.TealTr
+import com.example.otiummusicplayer.utils.loadPicture
 import com.example.otiummusicplayer.utils.toast
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.flow.Flow
@@ -101,7 +102,11 @@ fun TracksListElement(
                             )) {
                         Row(modifier = Modifier.weight(0.82f)) {
                             AsyncImage(
-                                model = tracks[index]?.image,
+                                model = if (tracks[index]?.image != null) {
+                                    tracks[index]?.image
+                                } else {
+                                    loadPicture(tracks[index]?.path)
+                                },
                                 placeholder = painterResource(id = R.drawable.no_image),
                                 error = painterResource(id = R.drawable.no_image),
                                 contentDescription = null,

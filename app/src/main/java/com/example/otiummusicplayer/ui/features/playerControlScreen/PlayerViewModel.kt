@@ -8,6 +8,7 @@ import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
 import com.example.otiummusicplayer.ui.features.playerControlScreen.playerElements.DownloadTrackUseCase
+import com.example.otiummusicplayer.utils.loadPicture
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -92,6 +93,7 @@ class PlayerViewModel @Inject constructor(
             state.value.currentTrack?.let { track ->
                 state.value.mediaPlayer?.setDataSource(track.audio)
                 state.value.mediaPlayer?.prepare()
+                setBitmapImage()
             }
         } catch (e: IOException) {
             e.stackTrace
@@ -191,5 +193,11 @@ class PlayerViewModel @Inject constructor(
 
     private fun setPosition(position: Int) {
         state.tryEmit(state.value.copy(currentPosition = position))
+    }
+
+    private fun setBitmapImage() {
+        state.value.currentTrack?.let { track ->
+            state.tryEmit(state.value.copy(imageBitmap = loadPicture(track.path)))
+        }
     }
 }

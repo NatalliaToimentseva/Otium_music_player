@@ -11,8 +11,8 @@ data class MobileStorageTrackModel(
     val album: String,
     val artist: String,
     val duration: Int,
-    val uri: Uri,
-    val folderId: Int
+    val folderId: Int,
+    val path: String
 )
 
 fun MobileStorageTrackModel.toTrackModel(): TrackModel {
@@ -25,8 +25,8 @@ fun MobileStorageTrackModel.toTrackModel(): TrackModel {
         id = id.toString(),
         name = trTitle,
         image = null,
-        audio = uri.toString(),
-//        uri = uri,
+        path = path,
+        audio = Uri.parse(path).toString(),
         duration = formatTimeMls(duration),
         albumName = album,
         albumId = null,

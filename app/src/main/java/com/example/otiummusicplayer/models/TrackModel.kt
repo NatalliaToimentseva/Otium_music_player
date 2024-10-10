@@ -10,6 +10,7 @@ data class TrackModel(
     val id: String,
     val name: String,
     val image: String?,
+    val path: String?,
     val audio: String,
     val duration: String,
     val albumName: String,
@@ -19,7 +20,7 @@ data class TrackModel(
     val isDownloadAllowed: Boolean?,
     val shareUrl: String?,
     val isFavorite: Boolean?,
-    val playlistId: Long
+    val playlistId: Long,
 ) : Parcelable
 
 fun TrackModel.toTrackDbEntity(playlistId: Long): TracksDbEntity {
@@ -28,6 +29,7 @@ fun TrackModel.toTrackDbEntity(playlistId: Long): TracksDbEntity {
         id = id,
         trackName = name,
         trackImage = image,
+        trackPath = path,
         trackAudio = audio,
         duration = formatTimeToMls(duration),
         albumName = albumName,

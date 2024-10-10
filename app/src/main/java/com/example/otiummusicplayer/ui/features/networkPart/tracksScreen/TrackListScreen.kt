@@ -142,7 +142,7 @@ fun TrackListPreview() {
             state = TrackLisState(
                 tracks = arrayListOf(
                     TrackModel(
-                        "", "Test", "", "", "01:00", "", "",
+                        "", "Test", "", "", "","01:00", "", "",
                         "", "", false, "", false, -1
                     )
                 )

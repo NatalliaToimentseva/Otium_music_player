@@ -23,6 +23,7 @@ class MobileStorageMusicProviderImpl @Inject constructor(
         MediaStore.Audio.Media.DURATION,
         MediaStore.Audio.Media.BUCKET_ID,
         MediaStore.Audio.Media.BUCKET_DISPLAY_NAME,
+        MediaStore.Audio.Media.DATA
     )
 
     @SuppressLint("Range")
@@ -30,8 +31,7 @@ class MobileStorageMusicProviderImpl @Inject constructor(
         limit: Int,
         offset: Int
     ): Set<MobileStorageTrackModel> {
-        val listOfTracks = mutableSetOf<MobileStorageTrackModel>()
-
+        val setOfTracks = mutableSetOf<MobileStorageTrackModel>()
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} = ?"
         val selectionArguments = arrayOf("1")
         contentResolver.query(
@@ -59,19 +59,17 @@ class MobileStorageMusicProviderImpl @Inject constructor(
                         cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                     val dirId =
                         cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.BUCKET_ID))
-                    val uri = ContentUris.withAppendedId(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        id
-                    )
-                    listOfTracks.add(
+                    val path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+
+                    setOfTracks.add(
                         MobileStorageTrackModel(
-                            id, title, name, album, artist, duration, uri, dirId
+                            id, title, name, album, artist, duration, dirId, path
                         )
                     )
                 }
             }
         }
-        return listOfTracks
+        return setOfTracks
     }
 
     @SuppressLint("Range")
@@ -136,13 +134,11 @@ class MobileStorageMusicProviderImpl @Inject constructor(
                         cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
                     val dirId =
                         cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.BUCKET_ID))
-                    val uri = ContentUris.withAppendedId(
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                        id
-                    )
+                    val path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA))
+
                     listOfFoldersTracks.add(
                         MobileStorageTrackModel(
-                            id, title, name, album, artist, duration, uri, dirId
+                            id, title, name, album, artist, duration, dirId, path
                         )
                     )
                 }
