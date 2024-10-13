@@ -1,21 +1,16 @@
 package com.example.otiummusicplayer.ui.features
 
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.navigation.compose.rememberNavController
-import com.example.otiummusicplayer.appComponents.services.servicesImpl.PlayerService
+import com.example.otiummusicplayer.appComponents.services.musicService.PlayerService
 import com.example.otiummusicplayer.ui.navigation.AppGraph
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
-import com.example.otiummusicplayer.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

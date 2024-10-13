@@ -27,4 +27,6 @@
     <string name="permission_request">We need photos and media permission to show yours music. Without this permission only network search will be available.</string>
     <string name="permission">Permission</string>
     <string name="playlist_dialog_title">Choice playlist</string>
+    <string name="notification_channel">Now Playing</string>
+    <string name="notification_channel_description">Shows what music is currently playing in our App</string>
 </resources>

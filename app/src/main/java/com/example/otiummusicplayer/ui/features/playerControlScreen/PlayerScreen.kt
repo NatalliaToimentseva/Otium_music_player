@@ -1,6 +1,5 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -38,12 +37,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startForegroundService
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.otiummusicplayer.R
-import com.example.otiummusicplayer.appComponents.services.servicesImpl.PlayerService
 import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction

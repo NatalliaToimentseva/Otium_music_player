@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation (libs.androidx.media)
+    implementation ("com.google.android.exoplayer:exoplayer:2.17.0")
+    implementation ("com.google.android.exoplayer:extension-mediasession:2.17.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

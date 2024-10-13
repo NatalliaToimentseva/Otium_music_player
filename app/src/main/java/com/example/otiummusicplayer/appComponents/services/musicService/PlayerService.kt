@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.appComponents.services.servicesImpl
+package com.example.otiummusicplayer.appComponents.services.musicService
 
 import android.app.NotificationManager
 import android.app.Service

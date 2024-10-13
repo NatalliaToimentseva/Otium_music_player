@@ -4,7 +4,7 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.otiummusicplayer.appComponents.services.servicesImpl.PlayerService
+import com.example.otiummusicplayer.media.domain.MusicDataController
 import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
@@ -26,7 +26,8 @@ class PlayerViewModel @Inject constructor(
     private val favoriteUseCase: CheckInFavoriteUseCase,
     private val addToFavoriteUseCase: AddToFavoriteUseCase,
     private val deleteFromFavoriteUseCase: DeleteFromFavoriteUseCase,
-    private val downloadTrackUseCase: DownloadTrackUseCase
+    private val downloadTrackUseCase: DownloadTrackUseCase,
+    private val musicDataController: MusicDataController
 ) : ViewModel() {
 
     val state = MutableStateFlow(PlayerTrackState())
@@ -84,6 +85,7 @@ class PlayerViewModel @Inject constructor(
                             currentTrack = trackList.firstOrNull { it.id == itemId })
                     )
                 }
+                musicDataController.currentMusicData.tryEmit(trackList)
                 preparePlayer()
                 startPlayer()
             }
