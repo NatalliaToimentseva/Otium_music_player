@@ -15,10 +15,8 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -28,23 +26,12 @@ import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.Playe
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
 import com.example.otiummusicplayer.utils.formatTimeMls
 import com.example.otiummusicplayer.utils.formatTimeToMls
-import kotlinx.coroutines.delay
-
 
 @Composable
 fun AudioPlayerControls(
     state: PlayerTrackState,
     processAction: (action: PlayerTrackAction) -> Unit,
 ) {
-
-    LaunchedEffect(state.mediaPlayer) {
-        state.mediaPlayer?.let {
-            while (true) {
-                processAction(PlayerTrackAction.SetCurrentPosition(it.currentPosition))
-                delay(1000)
-            }
-        }
-    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(20.dp)
@@ -73,7 +60,7 @@ fun AudioPlayerControls(
             },
             valueRange = 0f..formatTimeToMls(state.currentTrack?.duration).toFloat(),
             onValueChangeFinished = {
-                state.mediaPlayer?.seekTo(state.currentPosition)
+                processAction(PlayerTrackAction.SeekToPosition)
             },
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.onBackground,
@@ -98,7 +85,7 @@ fun AudioPlayerControls(
                     contentDescription = stringResource(id = R.string.btn_shuffle)
                 )
             }
-            IconButton(onClick = {processAction(PlayerTrackAction.PlayPrevious)}) {
+            IconButton(onClick = { processAction(PlayerTrackAction.PlayPrevious) }) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.btn_prev),
                     contentDescription = stringResource(id = R.string.btn_previous)
@@ -117,7 +104,7 @@ fun AudioPlayerControls(
                     .width(60.dp)
             ) {
                 Image(
-                    imageVector = if (state.isPlayed && state.mediaPlayer?.isPlaying == true) {
+                    imageVector = if (state.isPlayed) {
                         ImageVector.vectorResource(id = R.drawable.btn_pause)
                     } else {
                         ImageVector.vectorResource(id = R.drawable.btn_play)
@@ -125,15 +112,15 @@ fun AudioPlayerControls(
                     contentDescription = stringResource(id = R.string.btn_play_stop)
                 )
             }
-            IconButton(onClick = {processAction(PlayerTrackAction.PlayNext)}) {
+            IconButton(onClick = { processAction(PlayerTrackAction.PlayNext) }) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.btn_next),
                     contentDescription = stringResource(id = R.string.btn_next)
                 )
             }
-            IconButton(onClick = {processAction(PlayerTrackAction.LoopTrack)}) {
+            IconButton(onClick = { processAction(PlayerTrackAction.LoopTrack) }) {
                 Image(
-                    imageVector = if(state.isPlayerLooping) {
+                    imageVector = if (state.isPlayerLooping) {
                         ImageVector.vectorResource(id = R.drawable.btn_repeat_one)
                     } else {
                         ImageVector.vectorResource(id = R.drawable.btn_repeat)

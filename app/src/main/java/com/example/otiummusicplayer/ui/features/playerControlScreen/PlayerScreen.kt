@@ -1,7 +1,6 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen
 
-import android.graphics.Bitmap
-import android.util.Log
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,8 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,10 +38,12 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startForegroundService
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.otiummusicplayer.R
+import com.example.otiummusicplayer.appComponents.services.servicesImpl.PlayerService
 import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
@@ -52,7 +51,6 @@ import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.Playe
 import com.example.otiummusicplayer.ui.features.playerControlScreen.playerElements.AudioPlayerControls
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import com.example.otiummusicplayer.ui.theme.TealTr
-import com.example.otiummusicplayer.utils.loadPicture
 import com.example.otiummusicplayer.utils.toast
 
 const val MOBILE_TRACK = "mobile track"
@@ -66,6 +64,10 @@ fun PlayTrackDestination(
     navHostController: NavHostController,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
+//    val context = LocalContext.current
+//    val intent = Intent(context, PlayerService::class.java)
+//    startForegroundService(context, intent)
+
     val state by viewModel.state.collectAsState()
     PlayTrackScreen(
         whereFrom = whereFrom,

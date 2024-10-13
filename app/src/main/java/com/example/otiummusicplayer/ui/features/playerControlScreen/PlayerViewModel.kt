@@ -4,6 +4,7 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.otiummusicplayer.appComponents.services.servicesImpl.PlayerService
 import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
@@ -13,6 +14,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -28,7 +30,6 @@ class PlayerViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state = MutableStateFlow(PlayerTrackState())
-
     init {
         try {
             state.tryEmit(state.value.copy(mediaPlayer = MediaPlayer()))
@@ -53,6 +54,7 @@ class PlayerViewModel @Inject constructor(
             is PlayerTrackAction.SetCurrentPosition -> setPosition(action.position)
             is PlayerTrackAction.Init -> init(action.tracks, action.itemId)
             PlayerTrackAction.Play -> startPlayer()
+            PlayerTrackAction.SeekToPosition -> seekTo()
             PlayerTrackAction.Stop -> pausePlayer()
             PlayerTrackAction.LoopTrack -> loopTrack()
             PlayerTrackAction.PlayNext -> playNext()
@@ -102,14 +104,36 @@ class PlayerViewModel @Inject constructor(
 
     private fun startPlayer() {
         try {
-            state.value.mediaPlayer?.start()
-            state.value.mediaPlayer?.setOnCompletionListener {
-                playNext()
+            state.value.mediaPlayer?.let { player ->
+                player.start()
+                player.setOnCompletionListener {
+                    playNext()
+                }
+                detectCurrentPosition()
             }
             state.tryEmit(state.value.copy(isPlayed = true))
         } catch (e: IOException) {
             e.stackTrace
         }
+    }
+
+    private fun detectCurrentPosition() {
+        viewModelScope.launch(Dispatchers.IO) {
+            state.value.mediaPlayer?.let { player ->
+                while (player.isPlaying) {
+                    state.tryEmit(state.value.copy(currentPosition = player.currentPosition))
+                    delay(1000)
+                }
+            }
+        }
+    }
+
+    private fun setPosition(position: Int) {
+        state.tryEmit(state.value.copy(currentPosition = position))
+    }
+
+    private fun seekTo() {
+        state.value.mediaPlayer?.seekTo(state.value.currentPosition)
     }
 
     private fun pausePlayer() {
@@ -129,7 +153,12 @@ class PlayerViewModel @Inject constructor(
                 val index = state.value.tracks?.indexOfFirst { it.id == track.id }
                 if (index != null && index != -1 && (index + 1) <= (tracks.size - 1)) {
                     state.value.mediaPlayer?.reset()
-                    state.tryEmit(state.value.copy(currentTrack = tracks[index + 1]))
+                    state.tryEmit(
+                        state.value.copy(
+                            currentTrack = tracks[index + 1],
+                            currentPosition = 0
+                        )
+                    )
                     preparePlayer()
                     synchroniseLoop()
                     if (state.value.isPlayed) startPlayer()
@@ -144,7 +173,12 @@ class PlayerViewModel @Inject constructor(
                 val index = state.value.tracks?.indexOfFirst { it.id == track.id }
                 if (index != null && index != -1 && (index - 1) >= 0) {
                     state.value.mediaPlayer?.reset()
-                    state.tryEmit(state.value.copy(currentTrack = tracks[index - 1]))
+                    state.tryEmit(
+                        state.value.copy(
+                            currentTrack = tracks[index - 1],
+                            currentPosition = 0
+                        )
+                    )
                     preparePlayer()
                     synchroniseLoop()
                     if (state.value.isPlayed) startPlayer()
@@ -163,6 +197,10 @@ class PlayerViewModel @Inject constructor(
                 state.tryEmit(state.value.copy(isPlayerLooping = true))
             }
         }
+    }
+
+    private fun synchroniseLoop() {
+        state.value.mediaPlayer?.isLooping = state.value.isPlayerLooping
     }
 
     private fun setIfFavorite() {
@@ -185,14 +223,6 @@ class PlayerViewModel @Inject constructor(
         state.value.currentTrack?.let { track ->
             track.audioDownload?.let { downloadTrackUseCase.downloadTrack(it) }
         }
-    }
-
-    private fun synchroniseLoop() {
-        state.value.mediaPlayer?.isLooping = state.value.isPlayerLooping
-    }
-
-    private fun setPosition(position: Int) {
-        state.tryEmit(state.value.copy(currentPosition = position))
     }
 
     private fun setBitmapImage() {

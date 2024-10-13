@@ -10,6 +10,8 @@ sealed class PlayerTrackAction {
 
     data object Stop : PlayerTrackAction()
 
+    data object SeekToPosition : PlayerTrackAction()
+
     data object LoopTrack : PlayerTrackAction()
 
     data object PlayNext : PlayerTrackAction()
