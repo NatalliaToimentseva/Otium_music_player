@@ -1,10 +1,14 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen
 
-import android.media.AudioAttributes
-import android.media.MediaPlayer
+import android.support.v4.media.MediaBrowserCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.otiummusicplayer.media.domain.MusicDataController
+import com.example.otiummusicplayer.appComponents.services.media.constants.K
+import com.example.otiummusicplayer.appComponents.services.media.constants.K.PLAYBACK_UPDATE_INTERVAL
+import com.example.otiummusicplayer.appComponents.services.media.domain.MusicDataController
+import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.MediaPlayerServiceConnection
+import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.currentPosition
+import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.isPlaying
 import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
@@ -17,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,40 +30,70 @@ class PlayerViewModel @Inject constructor(
     private val addToFavoriteUseCase: AddToFavoriteUseCase,
     private val deleteFromFavoriteUseCase: DeleteFromFavoriteUseCase,
     private val downloadTrackUseCase: DownloadTrackUseCase,
-    private val musicDataController: MusicDataController
+    private val musicDataController: MusicDataController,
+    private val serviceConnection: MediaPlayerServiceConnection
 ) : ViewModel() {
 
     val state = MutableStateFlow(PlayerTrackState())
+    private val subscriptionCallback = object : MediaBrowserCompat.SubscriptionCallback() {}
+
     init {
-        try {
-            state.tryEmit(state.value.copy(mediaPlayer = MediaPlayer()))
-            state.value.mediaPlayer?.setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            )
-        } catch (e: IOException) {
-            e.stackTrace
+        viewModelScope.launch {
+            serviceConnection.isConnected.collect { connected ->
+                if (connected) { //rootMediaId shows if mediaSource ready and load data: fun onLoadChildren gave result
+                    serviceConnection.rootMediaId.let {
+                        serviceConnection.subscribe(
+                            it,
+                            subscriptionCallback
+                        )
+                    }
+                    delay(100)
+                    playAudio()
+                }
+            }
+        }
+        viewModelScope.launch {
+            serviceConnection.currentPlayingAudio.collect { value ->
+                if (value != null) {
+                    state.tryEmit(state.value.copy(currentTrack = value))
+                    setBitmapImage()
+                }
+            }
+        }
+        viewModelScope.launch {
+            serviceConnection.playBackState.collect { value ->
+                if (value != null) {
+                    state.tryEmit(
+                        state.value.copy(
+                            isPlayed = value.isPlaying,
+                        )
+                    )
+                    if (value.isPlaying) {
+                        updatePlayBack()
+                    }
+                }
+            }
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        state.value.mediaPlayer?.reset()
-        state.value.mediaPlayer?.release()
+        serviceConnection.unSubscribe(
+            K.MEDIA_ROOT_ID,
+            object : MediaBrowserCompat.SubscriptionCallback() {})
     }
 
     fun processAction(action: PlayerTrackAction) {
         when (action) {
             is PlayerTrackAction.SetCurrentPosition -> setPosition(action.position)
+            is PlayerTrackAction.ApplyCurrentPosition -> seekTo()
             is PlayerTrackAction.Init -> init(action.tracks, action.itemId)
-            PlayerTrackAction.Play -> startPlayer()
-            PlayerTrackAction.SeekToPosition -> seekTo()
-            PlayerTrackAction.Stop -> pausePlayer()
-            PlayerTrackAction.LoopTrack -> loopTrack()
-            PlayerTrackAction.PlayNext -> playNext()
-            PlayerTrackAction.PlayPrevious -> playPrevious()
-            PlayerTrackAction.ChooseIfFavorite -> setIfFavorite()
+            is PlayerTrackAction.Play -> playAudio()
+            is PlayerTrackAction.SetShuffleMode -> setShuffleMod()
+            is PlayerTrackAction.LoopTrack -> loopTrack()
+            is PlayerTrackAction.PlayNext -> skipToNext()
+            is PlayerTrackAction.PlayPrevious -> skipToPrevious()
+            is PlayerTrackAction.ChooseIfFavorite -> setIfFavorite()
             is PlayerTrackAction.DownloadTrack -> downloadTrack()
         }
     }
@@ -86,123 +119,88 @@ class PlayerViewModel @Inject constructor(
                     )
                 }
                 musicDataController.currentMusicData.tryEmit(trackList)
-                preparePlayer()
-                startPlayer()
             }
         }
     }
 
-    private fun preparePlayer() {
-        try {
-            state.value.currentTrack?.let { track ->
-                state.value.mediaPlayer?.setDataSource(track.audio)
-                state.value.mediaPlayer?.prepare()
-                setBitmapImage()
-            }
-        } catch (e: IOException) {
-            e.stackTrace
-        }
-    }
-
-    private fun startPlayer() {
-        try {
-            state.value.mediaPlayer?.let { player ->
-                player.start()
-                player.setOnCompletionListener {
-                    playNext()
+    private fun playAudio() {
+        state.value.currentTrack?.let { currentAudio ->
+            state.value.tracks?.let { serviceConnection.playAudio(it) }
+            if (currentAudio.id == serviceConnection.currentPlayingAudio.value?.id) {
+                if (state.value.isPlayed) {
+                    serviceConnection.pauseTrack()
+                } else {
+                    serviceConnection.playTrack()
                 }
-                detectCurrentPosition()
-            }
-            state.tryEmit(state.value.copy(isPlayed = true))
-        } catch (e: IOException) {
-            e.stackTrace
-        }
-    }
-
-    private fun detectCurrentPosition() {
-        viewModelScope.launch(Dispatchers.IO) {
-            state.value.mediaPlayer?.let { player ->
-                while (player.isPlaying) {
-                    state.tryEmit(state.value.copy(currentPosition = player.currentPosition))
-                    delay(1000)
-                }
+            } else {
+                serviceConnection.playFromMedia(currentAudio.id)
             }
         }
     }
 
-    private fun setPosition(position: Int) {
+//    private fun play() {
+//        serviceConnection.playTrack()
+//    }
+//
+//    private fun pause() {
+//        serviceConnection.pauseTrack()
+//    }
+
+//    fun stopPlayBack() {
+//        serviceConnection.transportControl?.stop()
+//    }
+
+    private fun skipToNext() {
+        serviceConnection.skipToNext()
+    }
+
+    private fun skipToPrevious() {
+        serviceConnection.skipToPrevious()
+    }
+
+    private fun setPosition(position: Float) {
         state.tryEmit(state.value.copy(currentPosition = position))
+//        seekTo(position.toLong())
     }
 
     private fun seekTo() {
-        state.value.mediaPlayer?.seekTo(state.value.currentPosition)
+        serviceConnection.seekTo(
+            state.value.currentPosition.toLong()
+        )
     }
 
-    private fun pausePlayer() {
-        try {
-            if (state.value.mediaPlayer?.isPlaying == true) {
-                state.value.mediaPlayer?.pause()
-                state.tryEmit(state.value.copy(isPlayed = false))
-            }
-        } catch (e: Exception) {
-            e.stackTrace
-        }
-    }
-
-    private fun playNext() {
-        state.value.currentTrack?.let { track ->
-            state.value.tracks?.let { tracks ->
-                val index = state.value.tracks?.indexOfFirst { it.id == track.id }
-                if (index != null && index != -1 && (index + 1) <= (tracks.size - 1)) {
-                    state.value.mediaPlayer?.reset()
-                    state.tryEmit(
-                        state.value.copy(
-                            currentTrack = tracks[index + 1],
-                            currentPosition = 0
-                        )
+    private fun updatePlayBack() {
+        viewModelScope.launch {
+            while (state.value.isPlayed) {
+                state.tryEmit(
+                    state.value.copy(
+                        currentPosition = serviceConnection.playBackState.value?.currentPosition?.toFloat()
+                            ?: 0f
                     )
-                    preparePlayer()
-                    synchroniseLoop()
-                    if (state.value.isPlayed) startPlayer()
-                }
+                )
+                delay(PLAYBACK_UPDATE_INTERVAL)
             }
         }
     }
 
-    private fun playPrevious() {
-        state.value.currentTrack?.let { track ->
-            state.value.tracks?.let { tracks ->
-                val index = state.value.tracks?.indexOfFirst { it.id == track.id }
-                if (index != null && index != -1 && (index - 1) >= 0) {
-                    state.value.mediaPlayer?.reset()
-                    state.tryEmit(
-                        state.value.copy(
-                            currentTrack = tracks[index - 1],
-                            currentPosition = 0
-                        )
-                    )
-                    preparePlayer()
-                    synchroniseLoop()
-                    if (state.value.isPlayed) startPlayer()
-                }
-            }
+    private fun setShuffleMod() {
+        if (state.value.isShuffle) {
+            serviceConnection.offShuffleMode()
+            state.tryEmit(state.value.copy(isShuffle = false))
+        } else {
+            serviceConnection.onShuffleMode()
+            state.tryEmit(state.value.copy(isShuffle = true))
         }
     }
 
     private fun loopTrack() {
-        state.value.mediaPlayer?.let { player ->
-            if (state.value.isPlayerLooping) {
-                player.isLooping = false
-                state.tryEmit(state.value.copy(isPlayerLooping = false))
-            } else {
-                player.isLooping = true
-                state.tryEmit(state.value.copy(isPlayerLooping = true))
-            }
+        if (state.value.isPlayerLooping) {
+            serviceConnection.offRepeatMode()
+            state.tryEmit(state.value.copy(isPlayerLooping = false))
+        } else {
+            serviceConnection.onRepeatMode()
+            state.tryEmit(state.value.copy(isPlayerLooping = true))
         }
-    }
-
-    private fun synchroniseLoop() {
-        state.value.mediaPlayer?.isLooping = state.value.isPlayerLooping
     }
 
     private fun setIfFavorite() {

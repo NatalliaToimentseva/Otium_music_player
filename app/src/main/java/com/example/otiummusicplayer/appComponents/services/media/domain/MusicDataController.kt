@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.media.domain
+package com.example.otiummusicplayer.appComponents.services.media.domain
 
 import com.example.otiummusicplayer.models.TrackModel
 import kotlinx.coroutines.channels.BufferOverflow

@@ -9,8 +9,9 @@ data class PlayerTrackState(
     val tracks: List<TrackModel>? = null,
     val currentTrack: TrackModel? = null,
     val imageBitmap: Bitmap? = null,
-    val currentPosition: Int = 0,
+    val currentPosition: Float = 0f,
     val isPlayed: Boolean = false,
     val isPlayerLooping: Boolean = false,
+    val isShuffle: Boolean = false,
     val isLoading: Boolean = false
 )

@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -61,9 +62,6 @@ fun PlayTrackDestination(
     navHostController: NavHostController,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
-//    val context = LocalContext.current
-//    val intent = Intent(context, PlayerService::class.java)
-//    startForegroundService(context, intent)
 
     val state by viewModel.state.collectAsState()
     PlayTrackScreen(
@@ -174,7 +172,7 @@ fun PlayTrackScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(430.dp)
+                    .height(dimensionResource(id = R.dimen.track_image_container))
             ) {
                 AsyncImage(
                     model = if (state.currentTrack?.image != null) {
@@ -189,7 +187,7 @@ fun PlayTrackScreen(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .fillMaxWidth()
-                        .height(410.dp)
+                        .height(dimensionResource(id = R.dimen.track_image))
                 )
                 Box(
                     modifier = Modifier

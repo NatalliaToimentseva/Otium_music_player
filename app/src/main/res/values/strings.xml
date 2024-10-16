@@ -20,7 +20,8 @@
     <string name="floating_button">Create playlist</string>
     <string name="positive_button">OK</string>
     <string name="negative_button">Cancel</string>
-    <string name="dialog_title">Create a new playlist</string>
+    <string name="dialog_title_add">Create a new playlist</string>
+    <string name="dialog_title_rename">Rename the playlist</string>
     <string name="dialog_message">Add playlist title:</string>
     <string name="folders">Folders</string>
     <string name="tracks">Tracks</string>

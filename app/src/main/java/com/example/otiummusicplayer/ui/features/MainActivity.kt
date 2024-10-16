@@ -8,7 +8,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.navigation.compose.rememberNavController
-import com.example.otiummusicplayer.appComponents.services.musicService.PlayerService
 import com.example.otiummusicplayer.ui.navigation.AppGraph
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private var playerService: PlayerService? = null
+//    private var playerService: PlayerService? = null
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,8 +30,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        val intent = Intent(this, PlayerService::class.java)
-        startForegroundService(intent)
+//        val intent = Intent(this, PlayerService::class.java)
+//        startForegroundService(intent)
 //        bindService(intent, this, Context.BIND_AUTO_CREATE)
     }
 

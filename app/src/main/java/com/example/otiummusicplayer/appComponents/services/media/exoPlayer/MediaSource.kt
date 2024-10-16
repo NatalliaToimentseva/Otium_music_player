@@ -1,9 +1,9 @@
-package com.example.otiummusicplayer.media.exoPlayer
+package com.example.otiummusicplayer.appComponents.services.media.exoPlayer
 
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
-import com.example.otiummusicplayer.media.domain.MusicDataController
+import com.example.otiummusicplayer.appComponents.services.media.domain.MusicDataController
 import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.utils.formatTimeToMls
 import com.google.android.exoplayer2.MediaItem
@@ -54,24 +54,9 @@ class MediaSource @Inject constructor(
 
     suspend fun load() {
         state = AudioSourceState.STATE_INITIALIZING
-        var data: List<TrackModel> = arrayListOf()
         musicDataController.listenCurrentMusicList().collect { list ->
-            data = list
+            transformData(list)
         }
-        audioMediaMetaData = data.map { audio ->
-            MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, audio.id)
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, audio.name)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, audio.artistName)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, audio.albumName)
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, audio.audio)
-                .putLong(
-                    MediaMetadataCompat.METADATA_KEY_DURATION,
-                    formatTimeToMls(audio.duration).toLong()
-                )
-                .build()
-        }
-        state = AudioSourceState.STATE_INITIALIZED
     }
 
     fun asMediaSource(dataSource: CacheDataSource.Factory): ConcatenatingMediaSource { //return items suitable for exoplayer to play one by one
@@ -101,6 +86,24 @@ class MediaSource @Inject constructor(
     fun refresh() {
         onReadyListeners.clear()
         state = AudioSourceState.STATE_CREATED
+    }
+
+    private fun transformData(data: List<TrackModel>) {
+        audioMediaMetaData = data.map { audio ->
+            MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, audio.id)
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, audio.name)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, audio.artistName)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, audio.albumName)
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, audio.audio)
+                .putString(MediaMetadataCompat.METADATA_KEY_ART_URI, audio.image)
+                .putLong(
+                    MediaMetadataCompat.METADATA_KEY_DURATION,
+                    formatTimeToMls(audio.duration).toLong()
+                )
+                .build()
+        }
+        state = AudioSourceState.STATE_INITIALIZED
     }
 }
 

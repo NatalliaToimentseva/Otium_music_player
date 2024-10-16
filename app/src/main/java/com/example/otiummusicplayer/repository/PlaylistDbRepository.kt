@@ -9,5 +9,7 @@ interface PlaylistDbRepository {
 
     suspend fun addPlaylist(playlistsEntity: PlaylistsEntity)
 
+    suspend fun updatePlaylist(playlistsEntity: PlaylistsEntity)
+
     suspend fun deletePlaylistById(id: List<Long>)
 }

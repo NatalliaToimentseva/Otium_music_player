@@ -1,4 +1,4 @@
-package com.example.otiummusicplayer.media.service
+package com.example.otiummusicplayer.appComponents.services.media.service
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -13,9 +13,9 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
-import com.example.otiummusicplayer.media.constants.K
-import com.example.otiummusicplayer.media.exoPlayer.MediaPlayerNotificationManager
-import com.example.otiummusicplayer.media.exoPlayer.MediaSource
+import com.example.otiummusicplayer.appComponents.services.media.constants.K
+import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.MediaPlayerNotificationManager
+import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.MediaSource
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
@@ -40,8 +40,8 @@ class MediaPlayerService : MediaBrowserServiceCompat() {
     lateinit var exoPlayer: ExoPlayer
     @Inject
     lateinit var mediaSource: MediaSource
-
     private var currentPlayingMedia: MediaMetadataCompat? = null
+
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private lateinit var mediaPlayerNotificationManager: MediaPlayerNotificationManager
@@ -72,7 +72,6 @@ class MediaPlayerService : MediaBrowserServiceCompat() {
             mediaSession.sessionToken,
             PlayerNotificationListener()
         )
-
         serviceScope.launch {
             mediaSource.load()
         }
@@ -115,6 +114,7 @@ class MediaPlayerService : MediaBrowserServiceCompat() {
     }
 
     override fun onCustomAction(action: String, extras: Bundle?, result: Result<Bundle>) {
+        super.onCustomAction(action, extras, result)
         when (action) {
 
             K.START_MEDIA_PLAY_ACTION -> {
@@ -132,13 +132,15 @@ class MediaPlayerService : MediaBrowserServiceCompat() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        exoPlayer.stop()
-        exoPlayer.clearMediaItems()
+//        exoPlayer.stop()
+//        exoPlayer.clearMediaItems()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
+        exoPlayer.stop()
+        exoPlayer.clearMediaItems()
         exoPlayer.release()
     }
 

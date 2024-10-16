@@ -27,4 +27,7 @@ class TracksDbRepositoryImpl @Inject constructor(
 
     override suspend fun deleteFromPlaylist(tracksId: List<String>) =
         dao.deleteTrackFromPlayList(tracksId)
+
+    override suspend fun deleteTracksWithPlaylist(playlistId: List<Long>) =
+        dao.deleteTracksWithPlayList(playlistId)
 }

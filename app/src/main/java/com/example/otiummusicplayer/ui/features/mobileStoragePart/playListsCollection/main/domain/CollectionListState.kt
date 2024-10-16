@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.Flow
 data class CollectionListState(
     val showPermissionDialog: Boolean = false,
     val playLists: Flow<PagingData<PlayerPlayListModel>>? = null,
-    val isShowDialog: Boolean = false,
+    val showPlaylistDialog: Boolean = false,
+    val showRenamePlaylistDialog: PlayerPlayListModel? = null,
     val dialogText: String = "",
-    val selectedItemsList: List<PlayerPlayListModel> = arrayListOf(),
+    val selectedPlaylists: List<PlayerPlayListModel> = arrayListOf(),
     val error: String? = null,
 )

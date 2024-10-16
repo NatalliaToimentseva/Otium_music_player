@@ -1,8 +1,12 @@
 package com.example.otiummusicplayer.utils
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
 fun loadPicture(absolutePath: String?): Bitmap? {
@@ -16,4 +20,18 @@ fun loadPicture(absolutePath: String?): Bitmap? {
     }
     retriever.release()
     return artwork
+}
+
+suspend fun loadImageWithGlide(url: String, context: Context): Bitmap? {
+    return withContext(Dispatchers.IO) {
+        try {
+            Glide.with(context)
+                .asBitmap()
+                .load(url)
+                .submit()
+                .get()
+        } catch (e: Exception) {
+            null
+        }
+    }
 }

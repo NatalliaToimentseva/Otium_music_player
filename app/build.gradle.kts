@@ -4,6 +4,8 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.10-1.0.13"
     id("com.google.dagger.hilt.android")
     id ("kotlin-parcelize")
+    alias(libs.plugins.google.firebase.firebase.perf)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -68,8 +70,9 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation (libs.androidx.media)
-    implementation ("com.google.android.exoplayer:exoplayer:2.17.0")
-    implementation ("com.google.android.exoplayer:extension-mediasession:2.17.0")
+    implementation ("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation ("com.google.android.exoplayer:extension-mediasession:2.19.1")
+    implementation(libs.firebase.perf)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

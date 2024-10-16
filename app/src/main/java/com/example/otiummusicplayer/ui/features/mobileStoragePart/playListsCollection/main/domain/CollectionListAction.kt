@@ -14,11 +14,16 @@ sealed class CollectionListAction {
 
     data object DeletePlaylist : CollectionListAction()
 
-    data object ShowDialog : CollectionListAction()
+    data class ShowPlaylistDialog(val isShow: Boolean) : CollectionListAction()
+
+    data class ShowRenamePlaylistDialog(val playlist: PlayerPlayListModel) : CollectionListAction()
 
     data class SetNewPlaylistTitleFromDialog(val title: String) : CollectionListAction()
 
     data class AddPlaylist(val title: String) : CollectionListAction()
+
+    data class RenamePlaylist(val playlist: PlayerPlayListModel, val newTitle: String) :
+        CollectionListAction()
 
     data object HideDialog : CollectionListAction()
 

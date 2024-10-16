@@ -18,4 +18,6 @@ interface TracksDbRepository {
     suspend fun addToPlaylist(tracks: List<TracksDbEntity>)
 
     suspend fun deleteFromPlaylist(tracksId: List<String>)
+
+    suspend fun deleteTracksWithPlaylist(playlistId: List<Long>)
 }

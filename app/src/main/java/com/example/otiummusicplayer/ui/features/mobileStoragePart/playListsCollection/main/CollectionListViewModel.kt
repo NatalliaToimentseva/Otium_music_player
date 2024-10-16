@@ -18,7 +18,9 @@ import javax.inject.Inject
 class CollectionListViewModel @Inject constructor(
     private val getPlaylistUseCase: GetPlaylistUseCase,
     private val addPlayListUseCase: AddPlayListUseCase,
-    private val deletePlaylistUseCase: DeletePlaylistUseCase
+    private val renamePlaylistUseCase: RenamePlaylistUseCase,
+    private val deletePlaylistUseCase: DeletePlaylistUseCase,
+    private val deleteTracksWithPlaylistUseCase: DeleteTracksWithPlaylistUseCase
 ) : ViewModel() {
 
     val state = MutableStateFlow(CollectionListState())
@@ -34,15 +36,19 @@ class CollectionListViewModel @Inject constructor(
             is CollectionListAction.SelectPlaylist -> selectPlaylist(action.item)
             is CollectionListAction.UnselectAll -> unselectAll()
             is CollectionListAction.DeletePlaylist -> deletePlayList()
-            is CollectionListAction.ShowDialog -> showDialog()
+            is CollectionListAction.ShowPlaylistDialog -> showDialog(action.isShow)
+            is CollectionListAction.ShowRenamePlaylistDialog -> showRenamePlaylistDialog(action.playlist)
             is CollectionListAction.SetNewPlaylistTitleFromDialog -> rememberTitleForNewPlaylist(
                 action.title
             )
-
             is CollectionListAction.AddPlaylist -> createPlayList(action.title)
+            is CollectionListAction.RenamePlaylist -> renamePlayList(
+                action.playlist,
+                action.newTitle
+            )
+
             is CollectionListAction.HideDialog -> hideDialog()
             is CollectionListAction.ClearError -> clearError()
-
         }
     }
 
@@ -60,11 +66,11 @@ class CollectionListViewModel @Inject constructor(
     }
 
     private fun selectPlaylist(item: PlayerPlayListModel) {
-        val indexInList = state.value.selectedItemsList.indexOfFirst { it.id == item.id }
+        val indexInList = state.value.selectedPlaylists.indexOfFirst { it.id == item.id }
         if (indexInList == -1) {
             state.tryEmit(
                 state.value.copy(
-                    selectedItemsList = state.value.selectedItemsList.plus(
+                    selectedPlaylists = state.value.selectedPlaylists.plus(
                         item
                     )
                 )
@@ -72,7 +78,7 @@ class CollectionListViewModel @Inject constructor(
         } else {
             state.tryEmit(
                 state.value.copy(
-                    selectedItemsList = state.value.selectedItemsList.minus(
+                    selectedPlaylists = state.value.selectedPlaylists.minus(
                         item
                     )
                 )
@@ -81,21 +87,26 @@ class CollectionListViewModel @Inject constructor(
     }
 
     private fun unselectAll() {
-        state.tryEmit(state.value.copy(selectedItemsList = arrayListOf()))
+        state.tryEmit(state.value.copy(selectedPlaylists = arrayListOf()))
     }
 
     private fun deletePlayList() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (state.value.selectedItemsList.isNotEmpty()) {
-                val listId = state.value.selectedItemsList.map { item -> item.id }
+            if (state.value.selectedPlaylists.isNotEmpty()) {
+                val listId = state.value.selectedPlaylists.map { item -> item.id }
                 deletePlaylistUseCase.deletePlayList(listId)
-                state.tryEmit(state.value.copy(selectedItemsList = arrayListOf()))
+                deleteTracksWithPlaylistUseCase.deleteWithPlaylist(listId)
+                state.tryEmit(state.value.copy(selectedPlaylists = arrayListOf()))
             }
         }
     }
 
-    private fun showDialog() {
-        state.tryEmit(state.value.copy(isShowDialog = true, dialogText = ""))
+    private fun showDialog(isShowDialog: Boolean) {
+        state.tryEmit(state.value.copy(showPlaylistDialog = isShowDialog, dialogText = ""))
+    }
+
+    private fun showRenamePlaylistDialog(playlist: PlayerPlayListModel?) {
+        state.tryEmit(state.value.copy(showRenamePlaylistDialog = playlist, dialogText = ""))
     }
 
     private fun rememberTitleForNewPlaylist(text: String) {
@@ -112,8 +123,26 @@ class CollectionListViewModel @Inject constructor(
         }
     }
 
+    private fun renamePlayList(playlist: PlayerPlayListModel, newTitle: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            renamePlaylistUseCase.renamePlayList(playlist.copy(playListTitle = newTitle))
+                .let { result ->
+                    if (result is PlaylistErrors.Error) {
+                        state.tryEmit(state.value.copy(error = result.message))
+                    }
+                }
+            state.tryEmit(
+                state.value.copy(
+                    selectedPlaylists = state.value.selectedPlaylists.minus(
+                        playlist
+                    )
+                )
+            )
+        }
+    }
+
     private fun hideDialog() {
-        state.tryEmit(state.value.copy(isShowDialog = false))
+        state.tryEmit(state.value.copy(showPlaylistDialog = false, showRenamePlaylistDialog = null))
     }
 
     private fun clearError() {

@@ -1,5 +1,6 @@
 package com.example.otiummusicplayer.ui.features.generalScreenElements
 
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,7 +49,7 @@ fun BottomNavigationScreenElement(
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.playlist),
                     contentDescription = stringResource(id = R.string.playlist),
-                    modifier = Modifier.width(25.dp)
+                    modifier = Modifier.width(30.dp)
                 )
             },
             label = {
@@ -63,32 +64,34 @@ fun BottomNavigationScreenElement(
                 unselectedTextColor = MaterialTheme.colorScheme.primary
             )
         )
-        NavigationBarItem(
-            alwaysShowLabel = true,
-            selected = selectedRoute == Route.FoldersScreen,
-            enabled = permissionsState.allPermissionsGranted,
-            onClick = {
-                navigate.invoke(Route.FoldersScreen.route)
-            },
-            icon = {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.folders),
-                    contentDescription = stringResource(id = R.string.folders),
-                    modifier = Modifier.width(25.dp)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            NavigationBarItem(
+                alwaysShowLabel = true,
+                selected = selectedRoute == Route.FoldersScreen,
+                enabled = permissionsState.allPermissionsGranted,
+                onClick = {
+                    navigate.invoke(Route.FoldersScreen.route)
+                },
+                icon = {
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.folders),
+                        contentDescription = stringResource(id = R.string.folders),
+                        modifier = Modifier.width(30.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(id = R.string.folders),
+                        fontSize = 12.sp
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = TealTr,
+                    selectedTextColor = Hover,
+                    unselectedTextColor = MaterialTheme.colorScheme.primary
                 )
-            },
-            label = {
-                Text(
-                    text = stringResource(id = R.string.folders),
-                    fontSize = 12.sp
-                )
-            },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = TealTr,
-                selectedTextColor = Hover,
-                unselectedTextColor = MaterialTheme.colorScheme.primary
             )
-        )
+        }
         NavigationBarItem(
             alwaysShowLabel = true,
             selected = selectedRoute == Route.MobileStorageTracksScreen,
@@ -100,7 +103,7 @@ fun BottomNavigationScreenElement(
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.tracks),
                     contentDescription = stringResource(id = R.string.tracks),
-                    modifier = Modifier.width(25.dp)
+                    modifier = Modifier.width(30.dp)
                 )
             },
             label = {
@@ -125,7 +128,7 @@ fun BottomNavigationScreenElement(
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.network_search),
                     contentDescription = stringResource(id = R.string.search),
-                    modifier = Modifier.width(25.dp)
+                    modifier = Modifier.width(30.dp)
                 )
             },
             label = {

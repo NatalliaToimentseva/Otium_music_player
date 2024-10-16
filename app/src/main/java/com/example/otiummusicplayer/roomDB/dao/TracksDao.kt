@@ -27,4 +27,7 @@ interface TracksDao {
 
     @Query("DELETE FROM tracks WHERE id IN (:tracksId)")
     suspend fun deleteTrackFromPlayList(tracksId: List<String>)
+
+    @Query("DELETE FROM tracks WHERE playlist_id IN (:playlistId)")
+    suspend fun deleteTracksWithPlayList(playlistId: List<Long>)
 }

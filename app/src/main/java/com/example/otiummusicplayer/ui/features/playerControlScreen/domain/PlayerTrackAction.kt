@@ -4,13 +4,13 @@ sealed class PlayerTrackAction {
 
     data class Init(val tracks: String, val itemId: String) : PlayerTrackAction()
 
-    data class SetCurrentPosition(val position: Int) : PlayerTrackAction()
+    data class SetCurrentPosition(val position: Float) : PlayerTrackAction()
+
+    data object ApplyCurrentPosition : PlayerTrackAction()
 
     data object Play : PlayerTrackAction()
 
-    data object Stop : PlayerTrackAction()
-
-    data object SeekToPosition : PlayerTrackAction()
+    data object SetShuffleMode : PlayerTrackAction()
 
     data object LoopTrack : PlayerTrackAction()
 

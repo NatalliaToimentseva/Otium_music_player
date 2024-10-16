@@ -48,7 +48,7 @@ fun AllDataScreenElement(
             ) {
                 Text(
                     text = stringResource(id = R.string.albums),
-                    fontSize = 24.sp,
+                    fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .padding(10.dp)
@@ -56,7 +56,7 @@ fun AllDataScreenElement(
                 AlbumsList(data = albums, goTrackList)
                 Text(
                     text = stringResource(id = R.string.artists),
-                    fontSize = 24.sp,
+                    fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .padding(10.dp)

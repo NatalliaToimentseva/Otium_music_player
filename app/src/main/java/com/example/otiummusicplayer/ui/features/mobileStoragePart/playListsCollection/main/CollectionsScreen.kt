@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +19,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -28,9 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -46,7 +41,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,12 +53,11 @@ import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsColle
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain.CollectionListState
 import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.permissionRequesElement.MultiplePermissionDialog
+import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.screenElements.ShowPlaylistDialog
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.FloatingButton
-import com.example.otiummusicplayer.ui.theme.Hover
 import com.example.otiummusicplayer.ui.theme.HoverLight
 import com.example.otiummusicplayer.ui.theme.TealExtraLight
-import com.example.otiummusicplayer.ui.theme.TealLight
 import com.example.otiummusicplayer.ui.theme.TealTr
 import com.example.otiummusicplayer.utils.toast
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -107,7 +100,7 @@ fun CollectionListScreen(
             )
         } else {
             listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         }
     )
@@ -137,7 +130,7 @@ fun CollectionListScreen(
                             .fillMaxWidth()
                     )
                     {
-                        if (state.selectedItemsList.isNotEmpty()) {
+                        if (state.selectedPlaylists.isNotEmpty()) {
                             IconButton(onClick = {
                                 processAction(CollectionListAction.UnselectAll)
                             }) {
@@ -153,7 +146,8 @@ fun CollectionListScreen(
                                 Image(
                                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
                                     contentDescription = null,
-                                    modifier = Modifier.size(25.dp)
+                                    modifier = Modifier
+                                        .size(25.dp)
                                 )
                             }
                         }
@@ -179,7 +173,11 @@ fun CollectionListScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { processAction(CollectionListAction.ShowDialog) },
+                onClick = {
+                    processAction(
+                        CollectionListAction.ShowPlaylistDialog(true)
+                    )
+                },
                 shape = MaterialTheme.shapes.small.copy(CornerSize(40)),
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.primary
@@ -208,11 +206,12 @@ fun CollectionListScreen(
                             items(lists.itemCount) { index ->
                                 lists[index]?.let { item ->
                                     Row(verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(bottom = 2.dp)
                                             .background(
-                                                if (state.selectedItemsList.contains(item)) {
+                                                if (state.selectedPlaylists.contains(item)) {
                                                     Brush.horizontalGradient(
                                                         arrayListOf(
                                                             TealExtraLight,
@@ -247,20 +246,37 @@ fun CollectionListScreen(
                                                 }
                                             )
                                     ) {
-                                        Image(
-                                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
-                                            contentDescription = stringResource(id = R.string.playlist),
-                                            modifier = Modifier.height(30.dp)
-                                        )
-                                        Text(
-                                            text = item.playListTitle,
-                                            fontSize = 16.sp,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.padding(
-                                                horizontal = 10.dp,
-                                                vertical = 5.dp
+                                        Row {
+                                            Image(
+                                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_play),
+                                                contentDescription = stringResource(id = R.string.playlist),
+                                                modifier = Modifier.height(30.dp)
                                             )
-                                        )
+                                            Text(
+                                                text = item.playListTitle,
+                                                fontSize = 16.sp,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.padding(
+                                                    horizontal = 10.dp,
+                                                    vertical = 5.dp
+                                                )
+                                            )
+                                        }
+                                        if (state.selectedPlaylists.contains(item)) {
+                                            IconButton(onClick = {
+                                                processAction(
+                                                    CollectionListAction.ShowRenamePlaylistDialog(
+                                                        item
+                                                    )
+                                                )
+                                            }) {
+                                                Image(
+                                                    imageVector = ImageVector.vectorResource(id = R.drawable.rename),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(25.dp)
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -278,68 +294,36 @@ fun CollectionListScreen(
                 processAction(CollectionListAction.IsShowPermissionDialog(isShow))
             }
         }
-        if (state.isShowDialog) {
-            AlertDialog(
-                onDismissRequest = { processAction(CollectionListAction.HideDialog) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        state.dialogText.let { text ->
-                            if (text.isNotBlank()) processAction(
-                                CollectionListAction.AddPlaylist(text)
-                            )
-                        }
-                        processAction(CollectionListAction.HideDialog)
-                    }) {
-                        Text(
-                            text = stringResource(id = R.string.positive_button),
-                            color = Hover
+        if (state.showPlaylistDialog) {
+            ShowPlaylistDialog(
+                titleId = R.string.dialog_title_add,
+                null,
+                state = state,
+                processAction = processAction
+            ) {
+                state.dialogText.let { title ->
+                    if (title.isNotBlank()) processAction(
+                        CollectionListAction.AddPlaylist(title)
+                    )
+                }
+            }
+        }
+        if (state.showRenamePlaylistDialog != null) {
+            ShowPlaylistDialog(
+                titleId = R.string.dialog_title_rename,
+                placeholder = state.showRenamePlaylistDialog.playListTitle,
+                state = state,
+                processAction = processAction
+            ) {
+                state.dialogText.let { newTitle ->
+                    if (newTitle.isNotBlank()) processAction(
+                        CollectionListAction.RenamePlaylist(
+                            state.showRenamePlaylistDialog,
+                            newTitle
                         )
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { processAction(CollectionListAction.HideDialog) }) {
-                        Text(
-                            text = stringResource(id = R.string.negative_button),
-                            color = Hover
-                        )
-                    }
-                },
-                text = {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = stringResource(id = R.string.dialog_title),
-                            style = TextStyle(fontSize = 18.sp),
-                            color = Hover
-                        )
-                        Text(
-                            text = stringResource(id = R.string.dialog_message),
-                            style = TextStyle(fontSize = 16.sp),
-                            color = Hover,
-                            modifier = Modifier.padding(vertical = 5.dp)
-                        )
-                        TextField(
-                            value = state.dialogText,
-                            onValueChange = { title ->
-                                processAction(
-                                    CollectionListAction.SetNewPlaylistTitleFromDialog(
-                                        title
-                                    )
-                                )
-                            },
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = TealLight,
-                                unfocusedContainerColor = TealLight,
-                                focusedTextColor = Hover,
-                                unfocusedTextColor = Hover,
-                                focusedIndicatorColor = Hover,
-                                unfocusedIndicatorColor = Hover,
-                                cursorColor = Hover
-                            )
-                        )
-                    }
-                },
-                containerColor = TealLight
-            )
+                    )
+                }
+            }
         }
     }
 }
