@@ -1,7 +1,6 @@
 package com.example.otiummusicplayer.appComponents.services.media.exoPlayer
 
 import android.content.Context
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -26,21 +25,22 @@ class MediaPlayerServiceConnection @Inject constructor(
 
     private val _currentPlayingAudio: MutableStateFlow<TrackModel?> = MutableStateFlow(null)
     val currentPlayingAudio: StateFlow<TrackModel?> get() = _currentPlayingAudio
-    private val _currentTrackPosition: MutableStateFlow<Long> = MutableStateFlow(0)
-    val currentTrackPosition: StateFlow<Long> get() = _currentTrackPosition
     private val _isPlaying: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> get() = _isPlaying
-    private val _isReady: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isReady: StateFlow<Boolean> get() = _isReady
+    private val _isConnected: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isConnected: StateFlow<Boolean> get() = _isConnected
     private val browserFuture = MediaBrowser.Builder(context, token).buildAsync()
+    private val listener = MediaControllerListener()
     private var mediaBrowser: MediaBrowser? = null
     private var mediaController: MediaController? = null
     private var audioList = MutableStateFlow<List<TrackModel>>(arrayListOf())
+    private var currentAudioId = MutableStateFlow<Int>(0)
 
     init {
         browserFuture.addListener({
             mediaBrowser = browserFuture.get()
             connectToServer()
+            _isConnected.value = true
         }, MoreExecutors.directExecutor())
     }
 
@@ -49,39 +49,29 @@ class MediaPlayerServiceConnection @Inject constructor(
         mediaSource.load()
     }
 
-    private fun connectToServer() {
-        mediaBrowser?.run {
-            if (isConnected) {
-                controllerFuture.addListener({
-                    mediaController = controllerFuture.get()
-                }, MoreExecutors.directExecutor())
-                mediaController?.addListener(MediaControllerListener())
-                mediaSource.whenReady {
-                    mediaController?.run {
-                        clearMediaItems()
-                        addMediaItems(mediaSource.audioMediaItems)
-                        prepare()
-                    }
-                    _isReady.value = true
-                }
+    fun disconnect() {
+        mediaBrowser?.removeListener(listener)
+        mediaBrowser = null
+    }
+
+    fun playAudio(tracks: List<TrackModel>, audioId: Int) {
+        audioList.value = tracks
+        currentAudioId.value = audioId
+        mediaSource.whenReady {
+            val itemToPlay =
+                mediaSource.audioMediaItems.find { it.mediaId == currentAudioId.value.toString() }
+            val index = mediaSource.audioMediaItems.indexOf(itemToPlay)
+            mediaController?.run {
+                clearMediaItems()
+                addMediaItems(mediaSource.audioMediaItems)
+                prepare()
+                seekTo(index, 0)
+                playWhenReady = true
             }
         }
     }
 
-    fun disconnect() {
-        mediaBrowser = null
-    }
-
-    fun playAudio(tracks:List<TrackModel>) {
-        audioList.value = tracks
-    }
-
-    fun playFromMedia(mediaId: String) {
-        mediaController?.run {
-            seekToDefaultPosition(mediaId.toInt())
-            playWhenReady
-        }
-    }
+    fun detectCurrentPosition(): Float = mediaController?.currentPosition?.toFloat() ?: 0F
 
     fun playTrack() {
         mediaController?.play()
@@ -121,11 +111,22 @@ class MediaPlayerServiceConnection @Inject constructor(
         mediaController?.repeatMode = Player.REPEAT_MODE_OFF
     }
 
+    private fun connectToServer() {
+        mediaBrowser?.run {
+            if (isConnected) {
+                controllerFuture.addListener({
+                    mediaController = controllerFuture.get()
+                }, MoreExecutors.directExecutor())
+                mediaBrowser?.addListener(listener)
+            }
+        }
+    }
+
     inner class MediaControllerListener : Player.Listener {
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             super.onMediaItemTransition(mediaItem, reason)
-            Log.d("AAA", "ServiceConnection onMediaItemTransition = $mediaItem")
+
             _currentPlayingAudio.value = mediaItem?.let { item ->
                 audioList.value.find {
                     it.id == item.mediaId
@@ -135,33 +136,7 @@ class MediaPlayerServiceConnection @Inject constructor(
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            Log.d("AAA", "ServiceConnection onIsPlayingChanged(isPlaying = $isPlaying")
             _isPlaying.value = isPlaying
-        }
-
-        override fun onPositionDiscontinuity(
-            oldPosition: Player.PositionInfo,
-            newPosition: Player.PositionInfo,
-            reason: Int
-        ) {
-            super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-            Log.d("AAA", "ServiceConnection onPositionDiscontinuity newPosition = ${newPosition.positionMs} reason $reason")
-            _currentTrackPosition.value = newPosition.positionMs
-        }
-
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            super.onPlaybackStateChanged(playbackState)
-            Log.d("AAA", "ServiceConnection onPlaybackStateChanged = $playbackState")
-        }
-
-        override fun onSeekBackIncrementChanged(seekBackIncrementMs: Long) {
-            super.onSeekBackIncrementChanged(seekBackIncrementMs)
-            Log.d("AAA", "ServiceConnection onSeekBackIncrementChanged = $seekBackIncrementMs")
-        }
-
-        override fun onSeekForwardIncrementChanged(seekForwardIncrementMs: Long) {
-            super.onSeekForwardIncrementChanged(seekForwardIncrementMs)
-            Log.d("AAA", "ServiceConnection onSeekForwardIncrementChanged = $seekForwardIncrementMs")
         }
     }
 }

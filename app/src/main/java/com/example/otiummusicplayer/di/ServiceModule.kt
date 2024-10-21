@@ -9,11 +9,6 @@ import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.database.StandaloneDatabaseProvider
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.datasource.cache.CacheDataSource
-import androidx.media3.datasource.cache.NoOpCacheEvictor
-import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
@@ -24,11 +19,8 @@ import com.google.common.util.concurrent.ListenableFuture
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ServiceScoped
 import dagger.hilt.components.SingletonComponent
-import java.io.File
 import javax.inject.Singleton
 
 @Module
@@ -83,48 +75,16 @@ object ServiceModule {
             .build()
     }
 
-//    @OptIn(UnstableApi::class)
-//    @Provides
-//    @Singleton
-//    fun provideMediaSessionToken (mediaSession: MediaSession): android.media.session.MediaSession.Token {
-//       return mediaSession.platformToken
-//    }
-
     @OptIn(UnstableApi::class)
     @Provides
     @Singleton
     fun provideControllerFuture(
         @ApplicationContext context: Context,
         mediaSession: MediaSession
-//        token: SessionToken
     ): ListenableFuture<MediaController> {
         return MediaController.Builder(
             context,
             mediaSession.token
         ).buildAsync()
-    }
-
-    @Provides
-    @Singleton
-    fun provideDataSourceFactory(
-        @ApplicationContext context: Context
-    ) = DefaultDataSource.Factory(context)
-
-    @OptIn(UnstableApi::class)
-    @Provides
-    @Singleton
-    fun provideCacheDataSourceFactory(
-        @ApplicationContext context: Context,
-        dataSource: DefaultDataSource.Factory
-    ): CacheDataSource.Factory {
-        val cacheDir = File(context.cacheDir, "media")
-
-        val databaseProvider = StandaloneDatabaseProvider(context)
-
-        val cache = SimpleCache(cacheDir, NoOpCacheEvictor(), databaseProvider)
-        return CacheDataSource.Factory().apply {
-            setCache(cache)
-            setUpstreamDataSourceFactory(dataSource)
-        }
     }
 }

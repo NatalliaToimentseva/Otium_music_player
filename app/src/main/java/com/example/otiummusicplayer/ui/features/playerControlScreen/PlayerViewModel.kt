@@ -1,6 +1,5 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,9 +36,15 @@ class PlayerViewModel @OptIn(UnstableApi::class)
     val state = MutableStateFlow(PlayerTrackState())
 
     init {
-        viewModelScope.launch (Dispatchers.Main){
-            serviceConnection.isReady.collect { isReady ->
-                playAudio()
+        viewModelScope.launch(Dispatchers.Main) {
+            serviceConnection.isConnected.collect { isConnected ->
+                if (isConnected) {
+                    state.value.tracks?.let { tracks ->
+                        state.value.currentTrack?.let { track ->
+                            serviceConnection.playAudio(tracks, track.id.toInt())
+                        }
+                    }
+                }
             }
         }
         viewModelScope.launch {
@@ -47,7 +52,6 @@ class PlayerViewModel @OptIn(UnstableApi::class)
                 if (value != null) {
                     val newCurrentTrack = state.value.tracks?.find { track ->
                         track.id == value.id
-
                     }
                     state.tryEmit(state.value.copy(currentTrack = newCurrentTrack))
                     setBitmapImage()
@@ -118,19 +122,10 @@ class PlayerViewModel @OptIn(UnstableApi::class)
 
     @OptIn(UnstableApi::class)
     private fun playAudio() {
-        state.value.currentTrack?.let { currentAudio ->
-            state.value.tracks?.let { list ->
-                serviceConnection.playAudio(list)
-                if (currentAudio.id == serviceConnection.currentPlayingAudio.value?.id) {
-                    if (state.value.isPlayed) {
-                        serviceConnection.pauseTrack()
-                    } else {
-                        serviceConnection.playTrack()
-                    }
-                } else {
-                    serviceConnection.playFromMedia(currentAudio.id)
-                }
-            }
+        if (state.value.isPlayed) {
+            serviceConnection.pauseTrack()
+        } else {
+            serviceConnection.playTrack()
         }
     }
 
@@ -155,13 +150,13 @@ class PlayerViewModel @OptIn(UnstableApi::class)
         )
     }
 
+    @OptIn(UnstableApi::class)
     private fun updatePlayBack() {
         viewModelScope.launch {
             while (state.value.isPlayed) {
-//                Log.d("AAA", " VW currentTrackPosition from serviceConnection= ${serviceConnection.currentTrackPosition.value.toFloat()}")
                 state.tryEmit(
                     state.value.copy(
-                        currentPosition = serviceConnection.currentTrackPosition.value.toFloat()
+                        currentPosition = serviceConnection.detectCurrentPosition()
                     )
                 )
                 delay(PLAYBACK_UPDATE_INTERVAL)
