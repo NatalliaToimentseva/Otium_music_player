@@ -1,6 +1,5 @@
 package com.example.otiummusicplayer.repository.dataSource
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.domain.PagingResult
@@ -31,7 +30,6 @@ abstract class BasePagingSource<T : Any>(
 
             when (response) {
                 is PagingResult.Success -> {
-                    Log.d("AAA", "BasePagingSource = ${response.data}")
                     LoadResult.Page(
                         data = response.data,
                         prevKey = if (page == BASE_STARTING_PAGE_INDEX) null else page - ONE_PAGE,

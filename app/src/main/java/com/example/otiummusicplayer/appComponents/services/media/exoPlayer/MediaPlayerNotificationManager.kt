@@ -4,47 +4,50 @@ import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.MediaSessionCompat.Token
+import android.util.Log
+import androidx.annotation.OptIn
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.appComponents.services.media.constants.K
 import com.example.otiummusicplayer.utils.loadImageWithGlide
 import com.example.otiummusicplayer.utils.loadPicture
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.NotificationListener
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaController
+import androidx.media3.ui.PlayerNotificationManager
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-internal class MediaPlayerNotificationManager(
+@UnstableApi
+class MediaPlayerNotificationManager @OptIn(UnstableApi::class) constructor
+    (
     context: Context,
-    sessionToken: Token,
-    notificationListener: NotificationListener
+    mediaController: MediaController,
+//    controllerFuture: ListenableFuture<MediaController>,
+    sessionToken: android.media.session.MediaSession.Token,
+    notificationListener: PlayerNotificationManager.NotificationListener
 ) {
 
-    private val notificationManager: PlayerNotificationManager
+//    private var mediaController: MediaController? = null
 
-    init {
-        val mediaController = MediaControllerCompat(context, sessionToken)
-        val builder = PlayerNotificationManager.Builder(
-            context,
-            K.NOTIFICATION_ID,
-            K.NOTIFICATION_CHANNEL_ID
-        )
-        with(builder) {
-            setMediaDescriptionAdapter(DescriptionAdapter(context, mediaController))
-            setNotificationListener(notificationListener)
-            setChannelNameResourceId(R.string.notification_channel)
-            setChannelDescriptionResourceId(R.string.notification_channel_description)
-            setNextActionIconResourceId(R.drawable.btn_next)
-            setPreviousActionIconResourceId(R.drawable.btn_prev)
-            setStopActionIconResourceId(R.drawable.btn_close)
-        }
-        notificationManager = builder.build()
-        with(notificationManager) {
+    private val notificationManager: PlayerNotificationManager = PlayerNotificationManager.Builder(
+        context,
+        K.NOTIFICATION_ID,
+        K.NOTIFICATION_CHANNEL_ID
+    )
+        .setMediaDescriptionAdapter(DescriptionAdapter(context, mediaController))
+        .setNotificationListener(notificationListener)
+        .setChannelNameResourceId(R.string.notification_channel)
+        .setChannelDescriptionResourceId(R.string.notification_channel_description)
+        .setNextActionIconResourceId(R.drawable.btn_next)
+        .setPreviousActionIconResourceId(R.drawable.btn_prev)
+        .setStopActionIconResourceId(R.drawable.btn_close)
+        .build().apply {
             setMediaSessionToken(sessionToken)
             setSmallIcon(R.drawable.ic_play)
             setUseNextAction(true)
@@ -53,19 +56,25 @@ internal class MediaPlayerNotificationManager(
             setUseFastForwardAction(false)
             setUseStopAction(true)
         }
-    }
+
+//    init {
+//        controllerFuture.addListener({
+//            mediaController = controllerFuture.get()
+//        }, MoreExecutors.directExecutor())
+//    }
 
     fun hideNotification() {
         notificationManager.setPlayer(null)
     }
 
     fun showNotification(player: Player) {
+        Log.d("AAA", "MediaPlayerNotificationManager showNotification was called")
         notificationManager.setPlayer(player)
     }
 
     inner class DescriptionAdapter(
         private val context: Context,
-        private val controller: MediaControllerCompat
+        private val controller: MediaController?
     ) :
         PlayerNotificationManager.MediaDescriptionAdapter {
 
@@ -78,21 +87,23 @@ internal class MediaPlayerNotificationManager(
         private var cachedURI: String? = null
 
         override fun getCurrentContentTitle(player: Player): CharSequence {
-            return controller.metadata.description.title.toString()
+            return controller?.mediaMetadata?.title.toString()
         }
 
         override fun createCurrentContentIntent(player: Player): PendingIntent? =
-            controller.sessionActivity
+            controller?.sessionActivity
 
-        override fun getCurrentContentText(player: Player): CharSequence? = null
+        override fun getCurrentContentText(player: Player): CharSequence {
+            return controller?.mediaMetadata?.artist.toString()
+        }
 
         override fun getCurrentLargeIcon(
             player: Player,
             callback: PlayerNotificationManager.BitmapCallback
         ): Bitmap? {
-            val newUri = controller.metadata.description.mediaUri?.path
-            val newUrl =
-                controller.metadata.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI)
+            val newUri = controller?.mediaMetadata?.artworkUri?.path //description.mediaUri?.path
+            val newUrl: String? = null
+//                controller.getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI)
 
             return if (
                 (cachedURL == null && cachedURI == null) ||
@@ -113,7 +124,8 @@ internal class MediaPlayerNotificationManager(
                     }
                     return null
                 } else if (newUri != null && newUri.length > 2) {
-                    val newImage = loadPicture(controller.metadata.description.mediaUri?.path)
+                    val newImage =
+                        loadPicture(controller?.mediaMetadata?.artworkUri?.path) //controller.metadata.description.mediaUri?.path
                     cachedURI = newUri
                     cachedImage = newImage
                     return cachedImage

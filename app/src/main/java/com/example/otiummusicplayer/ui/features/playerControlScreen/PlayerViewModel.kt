@@ -1,14 +1,13 @@
 package com.example.otiummusicplayer.ui.features.playerControlScreen
 
-import android.support.v4.media.MediaBrowserCompat
+import android.util.Log
+import androidx.annotation.OptIn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.otiummusicplayer.appComponents.services.media.constants.K
+import androidx.media3.common.util.UnstableApi
 import com.example.otiummusicplayer.appComponents.services.media.constants.K.PLAYBACK_UPDATE_INTERVAL
 import com.example.otiummusicplayer.appComponents.services.media.domain.MusicDataController
 import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.MediaPlayerServiceConnection
-import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.currentPosition
-import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.isPlaying
 import com.example.otiummusicplayer.models.TrackModel
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
@@ -24,7 +23,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PlayerViewModel @Inject constructor(
+class PlayerViewModel @OptIn(UnstableApi::class)
+@Inject constructor(
     private val gson: Gson,
     private val favoriteUseCase: CheckInFavoriteUseCase,
     private val addToFavoriteUseCase: AddToFavoriteUseCase,
@@ -35,59 +35,53 @@ class PlayerViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state = MutableStateFlow(PlayerTrackState())
-    private val subscriptionCallback = object : MediaBrowserCompat.SubscriptionCallback() {}
 
     init {
-        viewModelScope.launch {
-            serviceConnection.isConnected.collect { connected ->
-                if (connected) { //rootMediaId shows if mediaSource ready and load data: fun onLoadChildren gave result
-                    serviceConnection.rootMediaId.let {
-                        serviceConnection.subscribe(
-                            it,
-                            subscriptionCallback
-                        )
-                    }
-                    delay(100)
-                    playAudio()
-                }
+        viewModelScope.launch (Dispatchers.Main){
+            serviceConnection.isReady.collect { isReady ->
+                Log.d("AAA", "VM serviceConnection.isReady = $isReady")
+                playAudio()
             }
         }
         viewModelScope.launch {
             serviceConnection.currentPlayingAudio.collect { value ->
+                Log.d("AAA", "VM serviceConnection.currentPlayingAudio = $value")
                 if (value != null) {
-                    state.tryEmit(state.value.copy(currentTrack = value))
+                    val newCurrentTrack = state.value.tracks?.find { track ->
+                        track.id == value.id
+
+                    }
+                    state.tryEmit(state.value.copy(currentTrack = newCurrentTrack))
                     setBitmapImage()
                 }
             }
         }
         viewModelScope.launch {
-            serviceConnection.playBackState.collect { value ->
-                if (value != null) {
-                    state.tryEmit(
-                        state.value.copy(
-                            isPlayed = value.isPlaying,
-                        )
+            serviceConnection.isPlaying.collect { isPlaying ->
+                Log.d("AAA", "VM serviceConnection.isPlaying = $isPlaying")
+                state.tryEmit(
+                    state.value.copy(
+                        isPlayed = isPlaying,
                     )
-                    if (value.isPlaying) {
-                        updatePlayBack()
-                    }
+                )
+                if (isPlaying) {
+                    updatePlayBack()
                 }
             }
         }
     }
 
+    @OptIn(UnstableApi::class)
     override fun onCleared() {
         super.onCleared()
-        serviceConnection.unSubscribe(
-            K.MEDIA_ROOT_ID,
-            object : MediaBrowserCompat.SubscriptionCallback() {})
+        serviceConnection.disconnect()
     }
 
     fun processAction(action: PlayerTrackAction) {
         when (action) {
+            is PlayerTrackAction.Init -> init(action.tracks, action.itemId)
             is PlayerTrackAction.SetCurrentPosition -> setPosition(action.position)
             is PlayerTrackAction.ApplyCurrentPosition -> seekTo()
-            is PlayerTrackAction.Init -> init(action.tracks, action.itemId)
             is PlayerTrackAction.Play -> playAudio()
             is PlayerTrackAction.SetShuffleMode -> setShuffleMod()
             is PlayerTrackAction.LoopTrack -> loopTrack()
@@ -98,6 +92,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun init(tracks: String, itemId: String) {
         if (state.value.tracks == null) {
             val listType = object : TypeToken<List<TrackModel>>() {}.type
@@ -119,50 +114,52 @@ class PlayerViewModel @Inject constructor(
                     )
                 }
                 musicDataController.currentMusicData.tryEmit(trackList)
+                state.value.currentTrack?.let {
+                    musicDataController.currentPosition.tryEmit(it)
+                }
+                serviceConnection.loadData()
             }
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun playAudio() {
         state.value.currentTrack?.let { currentAudio ->
-            state.value.tracks?.let { serviceConnection.playAudio(it) }
-            if (currentAudio.id == serviceConnection.currentPlayingAudio.value?.id) {
-                if (state.value.isPlayed) {
-                    serviceConnection.pauseTrack()
+            state.value.tracks?.let { list ->
+                serviceConnection.playAudio(list)
+                if (currentAudio.id == serviceConnection.currentPlayingAudio.value?.id) {
+                    Log.d(
+                        "AAA",
+                        "VM if: serviceConnection.currentPlayingAudio = ${serviceConnection.currentPlayingAudio.value}"
+                    )
+                    if (state.value.isPlayed) {
+                        serviceConnection.pauseTrack()
+                    } else {
+                        serviceConnection.playTrack()
+                    }
                 } else {
-                    serviceConnection.playTrack()
+                    Log.d("AAA", "VM else")
+                    serviceConnection.playFromMedia(currentAudio.id)
                 }
-            } else {
-                serviceConnection.playFromMedia(currentAudio.id)
             }
         }
     }
 
-//    private fun play() {
-//        serviceConnection.playTrack()
-//    }
-//
-//    private fun pause() {
-//        serviceConnection.pauseTrack()
-//    }
-
-//    fun stopPlayBack() {
-//        serviceConnection.transportControl?.stop()
-//    }
-
+    @OptIn(UnstableApi::class)
     private fun skipToNext() {
         serviceConnection.skipToNext()
     }
 
+    @OptIn(UnstableApi::class)
     private fun skipToPrevious() {
         serviceConnection.skipToPrevious()
     }
 
     private fun setPosition(position: Float) {
         state.tryEmit(state.value.copy(currentPosition = position))
-//        seekTo(position.toLong())
     }
 
+    @OptIn(UnstableApi::class)
     private fun seekTo() {
         serviceConnection.seekTo(
             state.value.currentPosition.toLong()
@@ -174,8 +171,7 @@ class PlayerViewModel @Inject constructor(
             while (state.value.isPlayed) {
                 state.tryEmit(
                     state.value.copy(
-                        currentPosition = serviceConnection.playBackState.value?.currentPosition?.toFloat()
-                            ?: 0f
+                        currentPosition = serviceConnection.currentTrackPosition.value.toFloat()
                     )
                 )
                 delay(PLAYBACK_UPDATE_INTERVAL)
@@ -183,6 +179,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun setShuffleMod() {
         if (state.value.isShuffle) {
             serviceConnection.offShuffleMode()
@@ -193,6 +190,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun loopTrack() {
         if (state.value.isPlayerLooping) {
             serviceConnection.offRepeatMode()

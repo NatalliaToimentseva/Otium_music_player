@@ -37,10 +37,11 @@
         </activity>
         <service
             android:name=".appComponents.services.media.service.MediaPlayerService"
-            android:exported="false"
+            android:exported="true"
             android:foregroundServiceType="mediaPlayback"
             android:permission="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK">
             <intent-filter>
+                <action android:name="androidx.media3.session.MediaLibraryService"/>
                 <action android:name="android.media.browser.MediaBrowserService" />
             </intent-filter>
         </service>

@@ -69,10 +69,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation (libs.androidx.media)
-    implementation ("com.google.android.exoplayer:exoplayer:2.19.1")
-    implementation ("com.google.android.exoplayer:extension-mediasession:2.19.1")
+    implementation(libs.androidx.media3.exoplayer)
+    implementation (libs.androidx.media3.session)
     implementation(libs.firebase.perf)
+    implementation(libs.androidx.media3.ui)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
