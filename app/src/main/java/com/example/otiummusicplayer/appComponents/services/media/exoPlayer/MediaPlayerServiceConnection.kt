@@ -12,11 +12,8 @@ import com.example.otiummusicplayer.models.TrackModel
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @UnstableApi
@@ -48,36 +45,20 @@ class MediaPlayerServiceConnection @Inject constructor(
     }
 
     suspend fun loadData() {
-        Log.d("AAA", "ServiceConnection loadData()")
         mediaSource.refresh()
         mediaSource.load()
-//        { isReady ->
-//            Log.d("AAA", "ServiceConnection whenReady = $isReady")
-//            audioList.value = mediaSource.audioMediaItems
-//            _isReady.value = true
-//            Log.d("AAA", "ServiceConnection audioList= $audioList")
-//        }
     }
-
-//    private fun getData() {
-//        Log.d("AAA", "ServiceConnection getData() was called")
-//        val x= mediaSource.whenReady()
-//        audioList.value = x
-//        Log.d("AAA", "ServiceConnection mediaSource.whenReady() = ${x}")
-//        _isReady.value = true
-//    }
 
     private fun connectToServer() {
         mediaBrowser?.run {
             if (isConnected) {
-//                _isConnected.value = isConnected
                 controllerFuture.addListener({
                     mediaController = controllerFuture.get()
                 }, MoreExecutors.directExecutor())
                 mediaController?.addListener(MediaControllerListener())
                 mediaSource.whenReady {
                     mediaController?.run {
-                        stop()
+                        clearMediaItems()
                         addMediaItems(mediaSource.audioMediaItems)
                         prepare()
                     }
@@ -87,44 +68,17 @@ class MediaPlayerServiceConnection @Inject constructor(
         }
     }
 
-    private fun loadAudio() {
-        Log.d("AAA", "ServiceConnection loadAudio()")
-        mediaSource.whenReady { isReady ->
-            Log.d("AAA", "ServiceConnection loadAudio() isReady  = ${isReady }")
-            Log.d("AAA", "ServiceConnection loadAudio() mediaList = ${mediaSource.audioMediaItems}")
-            mediaController?.addMediaItems(mediaSource.audioMediaItems)
-        }
-    }
-
     fun disconnect() {
         mediaBrowser = null
-//        _isConnected.value = false
     }
 
     fun playAudio(tracks:List<TrackModel>) {
-        Log.d("AAA", "ServiceConnection playAudio was called")
         audioList.value = tracks
-//        if (audioList.value.isNotEmpty()) {
-//            _currentPlayingAudio.value = audioList.value.find {
-//                it.id == mediaController?.currentMediaItem?.mediaId
-//            }
-////            mediaController?.run {
-////                addMediaItems(audioList.value)
-////                seekToDefaultPosition(id)
-////                prepare()
-////                playWhenReady
-////            }
-//        }
-//        audioList = tracks
     }
 
     fun playFromMedia(mediaId: String) {
-        Log.d("AAA", "ServiceConnection playFromMedia was called")
-//        loadAudio()
         mediaController?.run {
-            Log.d("AAA", "ServiceConnection mediaController?.run was called")
             seekToDefaultPosition(mediaId.toInt())
-            Log.d("AAA", "ServiceConnection playFromMedia player = ${mediaController?.currentMediaItem}")
             playWhenReady
         }
     }
@@ -191,8 +145,23 @@ class MediaPlayerServiceConnection @Inject constructor(
             reason: Int
         ) {
             super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-            Log.d("AAA", "ServiceConnection onPositionDiscontinuity newPosition = $newPosition")
+            Log.d("AAA", "ServiceConnection onPositionDiscontinuity newPosition = ${newPosition.positionMs} reason $reason")
             _currentTrackPosition.value = newPosition.positionMs
+        }
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
+            Log.d("AAA", "ServiceConnection onPlaybackStateChanged = $playbackState")
+        }
+
+        override fun onSeekBackIncrementChanged(seekBackIncrementMs: Long) {
+            super.onSeekBackIncrementChanged(seekBackIncrementMs)
+            Log.d("AAA", "ServiceConnection onSeekBackIncrementChanged = $seekBackIncrementMs")
+        }
+
+        override fun onSeekForwardIncrementChanged(seekForwardIncrementMs: Long) {
+            super.onSeekForwardIncrementChanged(seekForwardIncrementMs)
+            Log.d("AAA", "ServiceConnection onSeekForwardIncrementChanged = $seekForwardIncrementMs")
         }
     }
 }

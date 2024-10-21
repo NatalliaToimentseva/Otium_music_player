@@ -17,12 +17,4 @@ class MusicDataController @Inject constructor() {
     )
 
     fun listenCurrentMusicList(): Flow<List<TrackModel>> = currentMusicData
-
-    val currentPosition = MutableSharedFlow<TrackModel>(
-        replay = 1,
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-
-    fun listenCurrentPosition(): Flow<TrackModel> = currentPosition
 }

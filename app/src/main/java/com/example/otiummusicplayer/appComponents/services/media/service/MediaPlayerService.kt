@@ -44,42 +44,14 @@ class MediaPlayerService : MediaSessionService() {
     lateinit var exoPlayer: ExoPlayer
 
     @Inject
-    lateinit var mediaSource: MediaSource
-
-    @Inject
-    lateinit var dataSourceFactory: CacheDataSource.Factory
-
-    @Inject
     lateinit var controllerFuture: ListenableFuture<MediaController>
 
     @Inject
     lateinit var mediaSession: MediaSession
     private var mediaController: MediaController? = null
-    private var currentAudio: MediaItem? = null
-    private var listAudio: List<MediaItem> = arrayListOf()
-//    private var notificationId1: Int? = null
-//    private var notification1: Notification? = null
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("AAA", "Service was created")
-//        serviceScope.launch {
-//            mediaSource.load()
-//        }
-//        serviceScope.launch {
-//            mediaSource.audioMediaItems.collect { list ->
-//                listAudio = list
-//            }
-//        }
-//        serviceScope.launch {
-//            mediaSource.currentAudio.collect { audio ->
-//                currentAudio = audio
-//                if (listAudio.isNotEmpty()) {
-//                    preparePlayer()
-//                }
-//            }
-//        }
-//        NotificationProvider()
         mediaSession.let { session ->
             controllerFuture.addListener({
                 mediaController = controllerFuture.get()

@@ -39,13 +39,11 @@ class PlayerViewModel @OptIn(UnstableApi::class)
     init {
         viewModelScope.launch (Dispatchers.Main){
             serviceConnection.isReady.collect { isReady ->
-                Log.d("AAA", "VM serviceConnection.isReady = $isReady")
                 playAudio()
             }
         }
         viewModelScope.launch {
             serviceConnection.currentPlayingAudio.collect { value ->
-                Log.d("AAA", "VM serviceConnection.currentPlayingAudio = $value")
                 if (value != null) {
                     val newCurrentTrack = state.value.tracks?.find { track ->
                         track.id == value.id
@@ -58,7 +56,6 @@ class PlayerViewModel @OptIn(UnstableApi::class)
         }
         viewModelScope.launch {
             serviceConnection.isPlaying.collect { isPlaying ->
-                Log.d("AAA", "VM serviceConnection.isPlaying = $isPlaying")
                 state.tryEmit(
                     state.value.copy(
                         isPlayed = isPlaying,
@@ -114,9 +111,6 @@ class PlayerViewModel @OptIn(UnstableApi::class)
                     )
                 }
                 musicDataController.currentMusicData.tryEmit(trackList)
-                state.value.currentTrack?.let {
-                    musicDataController.currentPosition.tryEmit(it)
-                }
                 serviceConnection.loadData()
             }
         }
@@ -128,17 +122,12 @@ class PlayerViewModel @OptIn(UnstableApi::class)
             state.value.tracks?.let { list ->
                 serviceConnection.playAudio(list)
                 if (currentAudio.id == serviceConnection.currentPlayingAudio.value?.id) {
-                    Log.d(
-                        "AAA",
-                        "VM if: serviceConnection.currentPlayingAudio = ${serviceConnection.currentPlayingAudio.value}"
-                    )
                     if (state.value.isPlayed) {
                         serviceConnection.pauseTrack()
                     } else {
                         serviceConnection.playTrack()
                     }
                 } else {
-                    Log.d("AAA", "VM else")
                     serviceConnection.playFromMedia(currentAudio.id)
                 }
             }
@@ -169,6 +158,7 @@ class PlayerViewModel @OptIn(UnstableApi::class)
     private fun updatePlayBack() {
         viewModelScope.launch {
             while (state.value.isPlayed) {
+//                Log.d("AAA", " VW currentTrackPosition from serviceConnection= ${serviceConnection.currentTrackPosition.value.toFloat()}")
                 state.tryEmit(
                     state.value.copy(
                         currentPosition = serviceConnection.currentTrackPosition.value.toFloat()
