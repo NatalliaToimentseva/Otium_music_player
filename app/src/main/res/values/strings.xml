@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">Otium Music player</string>
+    <string name="app_name" translatable="false">Otium Music player</string>
+    <string name="tab_all">All</string>
+    <string name="tab_favorite">Favorite</string>
     <string name="album_im">Album image</string>
     <string name="btn_shuffle">Shuffle</string>
     <string name="btn_previous">Previous</string>
@@ -12,6 +14,7 @@
     <string name="composition">Composition</string>
     <string name="playlist">Playlist</string>
     <string name="loading_error">Error of loading data</string>
+    <string name="start_download">Downloads was started, please wait…</string>
     <string name="file_downloaded">File was downloaded</string>
     <string name="search">Search</string>
     <string name="searchError">Search value required</string>

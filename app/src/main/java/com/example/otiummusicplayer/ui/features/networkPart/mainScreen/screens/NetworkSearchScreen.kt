@@ -28,15 +28,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.domain.NetworkSearchAction
 import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.domain.NetworkSearchState
 import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.screenElements.AllDataScreenElement
 import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
 import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
+import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.domain.ALL_TAB
 import com.example.otiummusicplayer.ui.features.playerControlScreen.NETWORK_TRACK
 import com.example.otiummusicplayer.ui.navigation.Route
 import com.example.otiummusicplayer.ui.theme.OtiumMusicPlayerTheme
@@ -136,7 +139,13 @@ fun NetworkSearchScreen(
                             }
                         },
                         text = {
-                            Text(text = text)
+                            Text(
+                                text = if (text == ALL_TAB) {
+                                    stringResource(id = R.string.tab_all)
+                                } else {
+                                    stringResource(id = R.string.tab_favorite)
+                                }
+                            )
                         }
                     )
                 }

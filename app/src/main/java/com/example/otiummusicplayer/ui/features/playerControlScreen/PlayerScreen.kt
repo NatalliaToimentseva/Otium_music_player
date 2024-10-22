@@ -24,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -89,6 +91,7 @@ fun PlayTrackScreen(
         processAction(PlayerTrackAction.Init(tracks, itemId))
     }
     val context = LocalContext.current
+    val message = stringResource(id = R.string.start_download)
 
     Scaffold(
         topBar = {
@@ -114,7 +117,7 @@ fun PlayTrackScreen(
                                     Button(
                                         onClick = {
                                             processAction(PlayerTrackAction.DownloadTrack)
-                                            context.toast("Downloads was started, please wait...")
+                                            context.toast(message)
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background),
                                         modifier = Modifier

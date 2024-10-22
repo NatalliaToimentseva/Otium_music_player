@@ -1,0 +1,35 @@
+<resources>
+    <string name="album_im">Изображение альбома</string>
+    <string name="tab_all">Все</string>
+    <string name="tab_favorite">Избранное</string>
+    <string name="btn_shuffle">Перемешать</string>
+    <string name="btn_previous">Предыдущий</string>
+    <string name="btn_play_stop">Играть/стоп</string>
+    <string name="btn_next">Следующий</string>
+    <string name="btn_repeat">Повторять</string>
+    <string name="btn_back">Назад</string>
+    <string name="btn_download">Скачать</string>
+    <string name="no_title">Нет названия</string>
+    <string name="composition">Композиция</string>
+    <string name="playlist">Плейлисты</string>
+    <string name="loading_error">Ошибка загрузки данных</string>
+    <string name="start_download">Загрузка началась, пожалуйста подождите…</string>
+    <string name="file_downloaded">Файл скачан</string>
+    <string name="search">Поиск</string>
+    <string name="searchError">Укажите значение для поиска</string>
+    <string name="albums">Альбомы</string>
+    <string name="artists">Артисты</string>
+    <string name="floating_button">Создание плейлиста</string>
+    <string name="positive_button">Ок</string>
+    <string name="negative_button">Отмена</string>
+    <string name="dialog_title_add">Создание нового плейлиста</string>
+    <string name="dialog_title_rename">Переименование плейлиста</string>
+    <string name="dialog_message">Добавьте название плейлисту:</string>
+    <string name="folders">Папки</string>
+    <string name="tracks">Треки</string>
+    <string name="permission_request">Требуется доступ к внутренним файлам для отображение музыки с телефона. Без разрешения будет доступна только вкладка поиска через интернет.</string>
+    <string name="permission">Разрешения</string>
+    <string name="playlist_dialog_title">Выберите плейлист</string>
+    <string name="notification_channel">Сейчас играет</string>
+    <string name="notification_channel_description">Отображает текущую композицию</string>
+</resources>
