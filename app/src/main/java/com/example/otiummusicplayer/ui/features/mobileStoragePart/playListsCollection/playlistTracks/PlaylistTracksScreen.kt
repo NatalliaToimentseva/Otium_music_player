@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.otiummusicplayer.R
-import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.TracksListElement
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.playlistTracks.domain.PlaylistTracksScreenAction
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.playlistTracks.domain.PlaylistTracksScreenState
 import com.example.otiummusicplayer.ui.features.playerControlScreen.MOBILE_TRACK

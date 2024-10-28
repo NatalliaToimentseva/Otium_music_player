@@ -12,7 +12,7 @@ import com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.folder
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.main.FoldersScreenDestination
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.CollectionListDestination
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.playlistTracks.PlaylistTracksScreenDestination
-import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.screens.NetworkSearchDestination
+import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.NetworkSearchDestination
 import com.example.otiummusicplayer.ui.features.networkPart.tracksScreen.TrackListDestination
 
 private const val TRACK_ID = "id"

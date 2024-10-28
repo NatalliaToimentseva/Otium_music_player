@@ -1,8 +1,8 @@
 package com.example.otiummusicplayer.network
 
-import com.example.otiummusicplayer.network.entities.Album
-import com.example.otiummusicplayer.network.entities.Artists
-import com.example.otiummusicplayer.network.entities.Track
+import com.example.otiummusicplayer.network.entities.AlbumResponse
+import com.example.otiummusicplayer.network.entities.ArtistsResponse
+import com.example.otiummusicplayer.network.entities.TrackResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -25,7 +25,7 @@ interface JamendoApi {
         @Query("format") format: String = FORMAT,
         @Query("limit") limit: String,
         @Query("offset") offset: Int
-    ): Response<Album>
+    ): Response<AlbumResponse>
 
     @GET("albums/")
     suspend fun getAlbumsByArtist(
@@ -33,7 +33,7 @@ interface JamendoApi {
         @Query("format") format: String = FORMAT,
         @Query("limit") limit: String = STANDART_LIMIT,
         @Query("artist_id") artistID: String
-    ): Response<Album>
+    ): Response<AlbumResponse>
 
     @GET("artists/")
     suspend fun getArtists(
@@ -42,7 +42,7 @@ interface JamendoApi {
         @Query("hasimage") hasImage: Boolean = true,
         @Query("limit") limit: String,
         @Query("offset") offset: Int
-    ): Response<Artists>
+    ): Response<ArtistsResponse>
 
     @GET("tracks/")
     suspend fun getTracksByAlbum(
@@ -50,7 +50,7 @@ interface JamendoApi {
         @Query("format") format: String = FORMAT,
         @Query("limit") limit: String = STANDART_LIMIT,
         @Query("album_id") id: Int,
-    ): Response<Track>
+    ): Response<TrackResponse>
 
     @GET("tracks/")
     suspend fun searchByQuery(
@@ -59,5 +59,5 @@ interface JamendoApi {
         @Query("search") query: String,
         @Query("limit") limit: String,
         @Query("offset") offset: Int
-    ): Response<Track>
+    ): Response<TrackResponse>
 }

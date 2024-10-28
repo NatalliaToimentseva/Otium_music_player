@@ -6,8 +6,6 @@ sealed class PlayerTrackAction {
 
     data class SetCurrentPosition(val position: Float) : PlayerTrackAction()
 
-    data object ApplyCurrentPosition : PlayerTrackAction()
-
     data object Play : PlayerTrackAction()
 
     data object SetShuffleMode : PlayerTrackAction()

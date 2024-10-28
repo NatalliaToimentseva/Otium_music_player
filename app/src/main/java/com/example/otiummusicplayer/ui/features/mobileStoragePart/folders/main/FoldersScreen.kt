@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.otiummusicplayer.R
-import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
-import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.BottomNavigationScreenElement
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.ShowProgress
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.main.domain.FoldersAction
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.folders.main.domain.FoldersState
 import com.example.otiummusicplayer.ui.navigation.Route
@@ -116,7 +116,7 @@ fun FoldersScreen(
                 }
             }
             if (state.isLoading) {
-                ShowProgress(null)
+                ShowProgress()
             }
             if (state.error != null) {
                 LocalContext.current.toast(state.error)

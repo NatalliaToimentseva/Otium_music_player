@@ -6,8 +6,8 @@ import com.example.otiummusicplayer.repository.TracksDbRepository
 import com.example.otiummusicplayer.repository.repositoryImpl.NetworkRepositoryImpl
 import com.example.otiummusicplayer.repository.repositoryImpl.PlaylistDbRepositoryImpl
 import com.example.otiummusicplayer.repository.repositoryImpl.TracksDbRepositoryImpl
-import com.example.otiummusicplayer.appComponents.services.servicesImpl.FileDownloaderImpl
-import com.example.otiummusicplayer.appComponents.services.FileDownloader
+import com.example.otiummusicplayer.appComponents.services.downloadService.FileDownloaderImpl
+import com.example.otiummusicplayer.appComponents.services.downloadService.FileDownloader
 import com.example.otiummusicplayer.appComponents.contentProviders.MobileStorageMusicProvider
 import com.example.otiummusicplayer.appComponents.contentProviders.contentProvidersImpl.MobileStorageMusicProviderImpl
 import dagger.Binds

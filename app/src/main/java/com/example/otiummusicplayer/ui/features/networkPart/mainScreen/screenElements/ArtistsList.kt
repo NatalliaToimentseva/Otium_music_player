@@ -25,7 +25,7 @@ import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.models.networkPart.ArtistModel
-import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.ShowProgress
 import com.example.otiummusicplayer.utils.toast
 
 @Composable
@@ -38,7 +38,7 @@ fun ArtistsList(artists: LazyPagingItems<ArtistModel>?, onClick: (id: String) ->
         artists?.let { items ->
             when (items.loadState.refresh) {
                 is LoadState.Error -> LocalContext.current.toast(stringResource(id = R.string.loading_error))
-                LoadState.Loading -> ShowProgress(null)
+                LoadState.Loading -> ShowProgress()
                 else -> {
                     LazyRow {
                         items(items.itemCount) { ind ->

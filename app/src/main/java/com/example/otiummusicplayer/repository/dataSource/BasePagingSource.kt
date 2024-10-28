@@ -43,8 +43,6 @@ abstract class BasePagingSource<T : Any>(
             }
         } catch (e: HttpException) {
             LoadResult.Error(e)
-        } catch (e: Exception) {
-            LoadResult.Error(e)
         }
     }
 }

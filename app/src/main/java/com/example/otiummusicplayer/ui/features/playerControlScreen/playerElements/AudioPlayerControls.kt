@@ -67,7 +67,6 @@ fun AudioPlayerControls(
             onValueChange = { value ->
                 processAction(PlayerTrackAction.SetCurrentPosition(value))
             },
-            onValueChangeFinished = { processAction(PlayerTrackAction.ApplyCurrentPosition) },
             valueRange = 0f..formatTimeToMls(state.currentTrack?.duration).toFloat(),
             colors = SliderDefaults.colors(
                 thumbColor = MaterialTheme.colorScheme.onBackground,

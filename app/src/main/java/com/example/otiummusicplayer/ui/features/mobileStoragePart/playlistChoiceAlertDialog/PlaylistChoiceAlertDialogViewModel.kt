@@ -33,7 +33,6 @@ class PlaylistChoiceAlertDialogViewModel @Inject constructor(
             is PlaylistChoiceAlertDialogAction.SelectPlayListFromDialog -> selectPlayListFromDialog(
                 action.list
             )
-
             is PlaylistChoiceAlertDialogAction.AddTracksToPlayList -> addTrackToPlayList()
         }
     }

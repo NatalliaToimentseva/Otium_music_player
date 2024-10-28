@@ -1,8 +1,6 @@
 package com.example.otiummusicplayer.di
 
 import com.example.otiummusicplayer.network.JamendoApi
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,12 +16,6 @@ private const val BASE_URL = "https://api.jamendo.com/v3.0/"
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
-    @Singleton
-    @Provides
-    fun provideGson(): Gson {
-        return GsonBuilder().create()
-    }
 
     @Provides
     @Singleton

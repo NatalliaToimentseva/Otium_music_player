@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.otiummusicplayer.R
-import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
-import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
-import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.BottomNavigationScreenElement
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.ShowProgress
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.TracksListElement
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.allTracks.domain.MobileStorageTracksAction
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.allTracks.domain.MobileStorageTracksState
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playlistChoiceAlertDialog.PlaylistChoiceAlertDialogDestination
@@ -160,7 +160,7 @@ fun MobileStorageTracksScreen(
                 )
             }
             if (state.isLoading) {
-                ShowProgress(null)
+                ShowProgress()
             }
             if (state.isShowPlaylistsDialog) {
                 PlaylistChoiceAlertDialogDestination(

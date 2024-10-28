@@ -48,10 +48,10 @@ import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.otiummusicplayer.R
-import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.ShowProgress
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain.CollectionListAction
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.domain.CollectionListState
-import com.example.otiummusicplayer.ui.features.generalScreenElements.BottomNavigationScreenElement
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.BottomNavigationScreenElement
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.permissionRequesElement.MultiplePermissionDialog
 import com.example.otiummusicplayer.ui.features.mobileStoragePart.playListsCollection.main.screenElements.ShowPlaylistDialog
 import com.example.otiummusicplayer.ui.navigation.Route
@@ -197,7 +197,7 @@ fun CollectionListScreen(
             playlists?.let { lists ->
                 when (lists.loadState.refresh) {
                     is LoadState.Error -> LocalContext.current.toast(stringResource(id = R.string.loading_error))
-                    LoadState.Loading -> ShowProgress(null)
+                    LoadState.Loading -> ShowProgress()
                     else -> {
                         LazyColumn(
                             modifier = Modifier

@@ -9,10 +9,11 @@ import kotlinx.coroutines.flow.Flow
 const val EMPTY = ""
 const val ALL_TAB = "All"
 const val FAVORITE_TAB = "Favorite"
+const val INITIAL_VALUE = 0
 
 data class NetworkSearchState(
     val tabsName: List<String> = listOf(ALL_TAB, FAVORITE_TAB),
-    val initialPage: Int = 0,
+    val initialPage: Int = INITIAL_VALUE,
     val artists: Flow<PagingData<ArtistModel>>? = null,
     val albums: Flow<PagingData<AlbumModel>>? = null,
     val artistAlbums: List<AlbumModel>? = null,

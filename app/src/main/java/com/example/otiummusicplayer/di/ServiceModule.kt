@@ -13,7 +13,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionToken
-import com.example.otiummusicplayer.appComponents.services.media.service.MediaPlayerService
+import com.example.otiummusicplayer.appComponents.services.musicService.MediaPlayerService
 import com.example.otiummusicplayer.ui.features.MainActivity
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.Module
@@ -35,30 +35,19 @@ object ServiceModule {
 
     @Provides
     @Singleton
-    fun providePendingIntent(@ApplicationContext context: Context): PendingIntent {
-        return TaskStackBuilder.create(context).run {
-            addNextIntent(Intent(context, MainActivity::class.java))
-            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-    }
-
-    @Provides
-    @Singleton
-    fun provideAudioAttributes(): AudioAttributes =
-        AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .setUsage(C.USAGE_MEDIA)
-            .build()
-
-    @Provides
-    @Singleton
     fun provideExoPlayer(
         @ApplicationContext context: Context,
-        audioAttributes: AudioAttributes
-    ): ExoPlayer = ExoPlayer.Builder(context)
+
+        ): ExoPlayer = ExoPlayer.Builder(context)
         .build()
         .apply {
-            setAudioAttributes(audioAttributes, true)
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                    .setUsage(C.USAGE_MEDIA)
+                    .build(),
+                true
+            )
             setHandleAudioBecomingNoisy(true)
         }
 
@@ -67,9 +56,12 @@ object ServiceModule {
     @Singleton
     fun provideMediaSession(
         @ApplicationContext context: Context,
-        player: ExoPlayer,
-        pendingIntent: PendingIntent,
+        player: ExoPlayer
     ): MediaSession {
+        val pendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntent(Intent(context, MainActivity::class.java))
+            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        }
         return MediaSession.Builder(context, player)
             .setSessionActivity(pendingIntent)
             .build()

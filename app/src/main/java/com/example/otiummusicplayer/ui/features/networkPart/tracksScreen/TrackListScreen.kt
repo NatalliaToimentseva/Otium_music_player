@@ -34,7 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.otiummusicplayer.R
 import com.example.otiummusicplayer.models.TrackModel
-import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.ShowProgress
 import com.example.otiummusicplayer.ui.features.networkPart.tracksScreen.domain.TrackLisState
 import com.example.otiummusicplayer.ui.features.networkPart.tracksScreen.domain.TrackListAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.NETWORK_TRACK
@@ -123,7 +123,7 @@ fun TrackListScreen(
                 }
             }
             if (state.isLoading) {
-                ShowProgress(null)
+                ShowProgress()
             }
             if (state.error != null) {
                 LocalContext.current.toast(state.error)

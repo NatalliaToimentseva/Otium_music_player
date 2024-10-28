@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.otiummusicplayer.R
-import com.example.otiummusicplayer.ui.features.generalScreenElements.ShowProgress
-import com.example.otiummusicplayer.ui.features.generalScreenElements.TracksListElement
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.ShowProgress
+import com.example.otiummusicplayer.ui.features.generalProjectsScreenElements.TracksListElement
 import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.domain.NetworkSearchAction
 import com.example.otiummusicplayer.ui.features.networkPart.mainScreen.domain.NetworkSearchState
 import com.example.otiummusicplayer.utils.toast
@@ -66,7 +66,7 @@ fun AllDataScreenElement(
                 }
             }
             if (state.isLoading) {
-                ShowProgress(null)
+                ShowProgress()
             }
             if (state.error != null) {
                 LocalContext.current.toast(state.error)
@@ -85,13 +85,13 @@ fun AllDataScreenElement(
                 }
             } else {
                 TracksListElement(
+                    tracksList = state.searchResult,
+                    goToPlayer = goToPlayer,
+                    null, null,
                     modifier = Modifier
                         .height(100.dp)
                         .width(100.dp)
-                        .padding(bottom = 10.dp),
-                    tracksList = state.searchResult,
-                    goToPlayer = goToPlayer,
-                    null, null
+                        .padding(bottom = 10.dp)
                 )
             }
         }

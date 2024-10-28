@@ -4,15 +4,16 @@ import androidx.annotation.OptIn
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
-import com.example.otiummusicplayer.appComponents.services.media.constants.K.PLAYBACK_UPDATE_INTERVAL
-import com.example.otiummusicplayer.appComponents.services.media.domain.MusicDataController
-import com.example.otiummusicplayer.appComponents.services.media.exoPlayer.MediaPlayerServiceConnection
+import com.example.otiummusicplayer.controllers.MediaPlayerController
 import com.example.otiummusicplayer.models.TrackModel
+import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.AddToFavoriteUseCase
+import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.CheckInFavoriteUseCase
+import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.DeleteFromFavoriteUseCase
+import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.DownloadTrackUseCase
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackAction
 import com.example.otiummusicplayer.ui.features.playerControlScreen.domain.PlayerTrackState
-import com.example.otiummusicplayer.ui.features.playerControlScreen.playerElements.DownloadTrackUseCase
 import com.example.otiummusicplayer.utils.loadPicture
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,16 +22,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val PLAYBACK_UPDATE_INTERVAL = 1000L
+
 @HiltViewModel
 class PlayerViewModel @OptIn(UnstableApi::class)
 @Inject constructor(
-    private val gson: Gson,
     private val favoriteUseCase: CheckInFavoriteUseCase,
     private val addToFavoriteUseCase: AddToFavoriteUseCase,
     private val deleteFromFavoriteUseCase: DeleteFromFavoriteUseCase,
     private val downloadTrackUseCase: DownloadTrackUseCase,
-    private val musicDataController: MusicDataController,
-    private val serviceConnection: MediaPlayerServiceConnection
+    private val serviceConnection: MediaPlayerController
 ) : ViewModel() {
 
     val state = MutableStateFlow(PlayerTrackState())
@@ -41,17 +42,17 @@ class PlayerViewModel @OptIn(UnstableApi::class)
                 if (isConnected) {
                     state.value.tracks?.let { tracks ->
                         state.value.currentTrack?.let { track ->
-                            serviceConnection.playAudio(tracks, track.id.toInt())
+                            serviceConnection.playAudio(tracks, track.id)
                         }
                     }
                 }
             }
         }
         viewModelScope.launch {
-            serviceConnection.currentPlayingAudio.collect { value ->
-                if (value != null) {
+            serviceConnection.currentPlayingAudio.collect { media ->
+                if (media != null) {
                     val newCurrentTrack = state.value.tracks?.find { track ->
-                        track.id == value.id
+                        track.id == media.mediaId
                     }
                     state.tryEmit(state.value.copy(currentTrack = newCurrentTrack))
                     setBitmapImage()
@@ -82,7 +83,6 @@ class PlayerViewModel @OptIn(UnstableApi::class)
         when (action) {
             is PlayerTrackAction.Init -> init(action.tracks, action.itemId)
             is PlayerTrackAction.SetCurrentPosition -> setPosition(action.position)
-            is PlayerTrackAction.ApplyCurrentPosition -> seekTo()
             is PlayerTrackAction.Play -> playAudio()
             is PlayerTrackAction.SetShuffleMode -> setShuffleMod()
             is PlayerTrackAction.LoopTrack -> loopTrack()
@@ -97,7 +97,7 @@ class PlayerViewModel @OptIn(UnstableApi::class)
     private fun init(tracks: String, itemId: String) {
         if (state.value.tracks == null) {
             val listType = object : TypeToken<List<TrackModel>>() {}.type
-            val trackList = gson.fromJson<List<TrackModel>>(tracks, listType)
+            val trackList = GsonBuilder().create().fromJson<List<TrackModel>>(tracks, listType)
             viewModelScope.launch(Dispatchers.IO) {
                 val isFavorite = favoriteUseCase.checkIsTrackInFavorite(itemId)
                 if (isFavorite != null) {
@@ -114,8 +114,6 @@ class PlayerViewModel @OptIn(UnstableApi::class)
                             currentTrack = trackList.firstOrNull { it.id == itemId })
                     )
                 }
-                musicDataController.currentMusicData.tryEmit(trackList)
-                serviceConnection.loadData()
             }
         }
     }
@@ -141,6 +139,7 @@ class PlayerViewModel @OptIn(UnstableApi::class)
 
     private fun setPosition(position: Float) {
         state.tryEmit(state.value.copy(currentPosition = position))
+        seekTo()
     }
 
     @OptIn(UnstableApi::class)

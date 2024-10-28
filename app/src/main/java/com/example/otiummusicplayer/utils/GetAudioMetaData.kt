@@ -15,8 +15,8 @@ fun loadPicture(absolutePath: String?): Bitmap? {
     }
     val retriever = MediaMetadataRetriever()
     retriever.setDataSource(absolutePath)
-    val artwork = retriever.embeddedPicture.let { it ->
-        it?.let { it1 -> BitmapFactory.decodeByteArray(it, 0, it1.size) }
+    val artwork = retriever.embeddedPicture?.let {
+        BitmapFactory.decodeByteArray(it, 0, it.size)
     }
     retriever.release()
     return artwork
