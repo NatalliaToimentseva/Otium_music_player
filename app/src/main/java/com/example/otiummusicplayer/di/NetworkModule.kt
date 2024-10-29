@@ -1,5 +1,6 @@
 package com.example.otiummusicplayer.di
 
+import com.example.otiummusicplayer.BuildConfig
 import com.example.otiummusicplayer.network.JamendoApi
 import dagger.Module
 import dagger.Provides
@@ -11,8 +12,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-private const val BASE_URL = "https://api.jamendo.com/v3.0/"
-
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -21,7 +20,7 @@ object NetworkModule {
     @Singleton
     fun provideApi(): JamendoApi {
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .client(
                 OkHttpClient.Builder()
                     .addNetworkInterceptor(HttpLoggingInterceptor().apply {

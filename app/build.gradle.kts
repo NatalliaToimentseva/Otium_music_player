@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp") version "1.9.10-1.0.13"
     id("com.google.dagger.hilt.android")
-    id ("kotlin-parcelize")
+    id("kotlin-parcelize")
     alias(libs.plugins.google.firebase.firebase.perf)
     alias(libs.plugins.google.gms.google.services)
 }
@@ -23,6 +23,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String", "BASE_URL", "\"https://api.jamendo.com/v3.0/\"")
+        buildConfigField("String", "CLIENT_ID", "\"92a6a782\"")
     }
 
     ksp {
@@ -31,7 +33,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -70,7 +72,7 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.androidx.media3.exoplayer)
-    implementation (libs.androidx.media3.session)
+    implementation(libs.androidx.media3.session)
     implementation(libs.firebase.perf)
     implementation(libs.androidx.media3.ui)
 
@@ -103,5 +105,5 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.paging)
-    implementation (libs.accompanist.permissions)
+    implementation(libs.accompanist.permissions)
 }
