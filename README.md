@@ -107,8 +107,15 @@ There are two tables:<br />
 There are 2 service:<br />
 * DownloadManager for downloading track by network (path: com.example.otiummusicplayer.appComponents.services.downloadService)<br />
 * MediaSessionService for storing exoPlayer, mediaSessions and playing music in the background (path:com.example.otiummusicplayer.appComponents.services.musicService)<br />
+
+![notification](https://github.com/user-attachments/assets/1d4b6162-0356-47ac-b262-ea0aad9821cb)
+
+Description of interaction architecture:2<br />
+
+![pic  2 Service ](https://github.com/user-attachments/assets/97d5be3f-cd0c-43ec-885f-2cd159a6a9a8)
  
 The service stores mediaSession and exoPlayer objects. Starts working when connected to it from MediaPlayerController (path: com.example.otiummusicplayer.controllers):<br />
+* mediaSession and exoPlayer are created with help of DI - ServiceModule (path: com.example.otiummusicplayer.di)<br />
 
  ```kotlin
 		private val browserFuture = MediaBrowser.Builder(context, token).buildAsync()
@@ -166,7 +173,3 @@ onMediaItemTransition and onIsPlayingChanged that are observed by the PlayerView
         }
     }
 ```
-* mediaSession and exoPlayer are created with help of DI - ServiceModule (path: com.example.otiummusicplayer.di)<br />
-Description of interaction architecture:2<br />
-
-![pic  2 Service ](https://github.com/user-attachments/assets/97d5be3f-cd0c-43ec-885f-2cd159a6a9a8)
