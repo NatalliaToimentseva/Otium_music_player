@@ -15,7 +15,7 @@ interface PlaylistsDao {
     suspend fun createPlaylist(list: PlaylistsEntity)
 
     @Update
-    suspend fun updatePlaylist(list: PlaylistsEntity)
+    suspend fun updatePlaylistTitle(list: PlaylistsEntity)
 
     @Query("DELETE FROM Playlists WHERE id IN (:id)")
     suspend fun deletePlaylist(id: List<Long>)
