@@ -1,4 +1,36 @@
 <resources>
-    <string name="app_name">Otium Music player</string>
+    <string name="app_name" translatable="false">Otium Music player</string>
+    <string name="tab_all">All</string>
+    <string name="tab_favorite">Favorite</string>
     <string name="album_im">Album image</string>
+    <string name="btn_shuffle">Shuffle</string>
+    <string name="btn_previous">Previous</string>
+    <string name="btn_play_stop">Play/Stop</string>
+    <string name="btn_next">Next</string>
+    <string name="btn_repeat">Repeat</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_download">Download</string>
+    <string name="no_title">No title</string>
+    <string name="composition">Composition</string>
+    <string name="playlist">Playlist</string>
+    <string name="loading_error">Error of loading data</string>
+    <string name="start_download">Downloads was started, please wait…</string>
+    <string name="file_downloaded">File was downloaded</string>
+    <string name="search">Search</string>
+    <string name="searchError">Search value required</string>
+    <string name="albums">Albums</string>
+    <string name="artists">Artists</string>
+    <string name="floating_button">Create playlist</string>
+    <string name="positive_button">OK</string>
+    <string name="negative_button">Cancel</string>
+    <string name="dialog_title_add">Create a new playlist</string>
+    <string name="dialog_title_rename">Rename the playlist</string>
+    <string name="dialog_message">Add playlist title:</string>
+    <string name="folders">Folders</string>
+    <string name="tracks">Tracks</string>
+    <string name="permission_request">We need photos and media permission to show yours music. Without this permission only network search will be available.</string>
+    <string name="permission">Permission</string>
+    <string name="playlist_dialog_title">Choice playlist</string>
+    <string name="notification_channel">Now Playing</string>
+    <string name="notification_channel_description">Shows what music is currently playing in our App</string>
 </resources>
