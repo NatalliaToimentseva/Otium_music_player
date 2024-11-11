@@ -17,6 +17,8 @@ import com.example.otiummusicplayer.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 
+private const val SCHEME = "package"
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MultiplePermissionDialog(
@@ -52,7 +54,7 @@ fun MultiplePermissionDialog(
                     } else {
                         val intent = Intent(
                             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                            Uri.fromParts("package", context.packageName, null)
+                            Uri.fromParts(SCHEME, context.packageName, null)
                         )
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(context, intent, null)
