@@ -8,9 +8,6 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-//API URL - https://developer.jamendo.com/v3.0/docs
-//TEST song url = "https://prod-1.storage.jamendo.com/?trackid=1467858&format=mp31&from=QeBfVL5FlSP5h7JRU1OYQQ%3D%3D%7C5OZLVhPfv%2Ff9Z7jFE1nvDw%3D%3D"
-
 private const val STANDART_LIMIT = "100"
 private const val FORMAT = "json"
 

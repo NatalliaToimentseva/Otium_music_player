@@ -33,31 +33,8 @@ private fun buildMediaItem(audio: TrackModel): MediaItem {
                 .setTitle(audio.name)
                 .setArtist(audio.artistName)
                 .setAlbumTitle(audio.albumName)
-//                    .setArtworkData(getImage(audio, context))
                 .setDurationMs(formatTimeToMls(audio.duration).toLong())
                 .build()
         )
         .build()
 }
-
-//fun Context.getImage(audio: TrackModel): ByteArray {
-//    var image: Bitmap? = null
-//    if (audio.image != null) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val downloadedImage = loadImageWithGlide(audio.image, this@getImage)
-//            withContext(Dispatchers.Main) {
-//                image = downloadedImage
-//            }
-//        }
-//    } else if (audio.path != null) {
-//        image = loadPicture(audio.path)
-//    }
-//    val byteArrayOutputStream = ByteArrayOutputStream()
-//    if (image != null) {
-//        image?.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-//    } else {
-//        BitmapFactory.decodeResource(this.resources, R.drawable.bg_sound)
-//            .compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-//    }
-//    return byteArrayOutputStream.toByteArray()
-//}
