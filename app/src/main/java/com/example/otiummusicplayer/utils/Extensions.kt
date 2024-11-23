@@ -15,7 +15,7 @@ fun Context.toast(message: String) {
 }
 
 fun ItemSnapshotList<TrackModel>.toStringGsonFormat(): String {
-    return GsonBuilder().create().toJson(this as List<TrackModel>)
+    return GsonBuilder().create().toJson(this)
 }
 
 @OptIn(UnstableApi::class)
